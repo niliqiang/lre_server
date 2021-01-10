@@ -15,9 +15,9 @@
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>#container{height:100%;width:100%}input:-webkit-autofill{-webkit-box-shadow:inset 0 0 0 1000px rgb(232, 240, 254);background-color:transparent}
-    .admin-login-background{width:300px;height:300px;position:absolute;left:50%;top:40%;margin-left:-150px;margin-top:-100px}
+    .admin-login-background{width:320px;height:300px;position:absolute;left:50%;top:40%;margin-left:-160px;margin-top:-100px}
     .admin-header{text-align:center;margin-bottom:40px;color: #000000;font-weight:bold;font-size:30px}
-    .admin-input{border-top-style:none;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;height:50px;width:300px;padding-bottom:0px}
+    .admin-input{border-top-style:none;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;height:50px;width:320px;padding-bottom:0px}
     .admin-input::-webkit-input-placeholder{color: #9dadce}
     .layui-icon-username{color: #0366d6 !important}
     .layui-icon-username:hover{color: #0366d6 !important}
@@ -25,10 +25,10 @@
     .layui-icon-password:hover{color: #0366d6 !important}
     .admin-input-username{border-top-style:solid;border-radius:10px 10px 0 0}
     .admin-input-password{border-radius:0 0 10px 10px}
-    .admin-button{margin-top:20px;font-weight:bold;font-size:18px;width:300px;height:40px;border-radius:5px;background-color:#2c974b;border:1px solid#1b1f2326}
-    .admin-register-link{margin-top:10px;width:300px;text-align:right}
-    .admin-error-input{margin-top:10px}
-    .admin-icon{margin-left:260px;margin-top:10px;font-size:30px}i{position:absolute}</style>
+    .admin-button{margin-top:20px;font-weight:bold;font-size:18px;width:320px;height:40px;border-radius:5px;background-color:#2c974b;border:1px solid#1b1f2326}
+    .admin-register-link{margin-top:10px;width:320px;text-align:right}
+    .admin-error-input{margin-top:10px;width:320px}
+    .admin-icon{margin-left:270px;margin-top:10px;font-size:30px}i{position:absolute}</style>
 </head>
 <body>
 <div id="container">
@@ -60,11 +60,13 @@
             </div>
         </form>
         <div class="admin-error-input">
-            <p th:if="${error}" align="right" style="color:red;">注册账户时发生未知错误</p>
-            <p th:if="${nullUserNameError}" align="right" style="color:red;">用户名不能为空</p>
-            <p th:if="${nullPasswordError}" align="right" style="color:red;">密码不能为空</p>
-            <p th:if="${mismatchError}" align="right" style="color:red;">两次输入的密码不匹配</p>
-            <p th:if="${illegalError}" align="right" style="color:red;">密码应由大小写字母和数字组成且不少于6位</p>
+            <p th:if="${nullPasswordError}" align="right" style="color:red">密码不能为空</p>
+            <p th:if="${mismatchPasswordError}" align="right" style="color:red">两次输入的密码不匹配</p>
+            <p th:if="${illegalPasswordError}" align="right" style="color:red">密码不少于4位且由大小写字母和数字组成</p>
+            <p th:if="${nullUserNameError}" align="right" style="color:red">用户名不能为空</p>
+            <p th:if="${existedUserNameError}" align="right" style="color:red">用户名已存在</p>
+            <p th:if="${illegalUserNameError}" align="right" style="color:red">用户名不少于4位且不含特殊字符（_@和.除外）</p>
+            <p th:if="${error}" align="right" style="color:red">注册账户时发生未知错误</p>
         </div>
     </div>
 </div>
