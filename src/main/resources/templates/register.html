@@ -62,7 +62,7 @@
         <div class="admin-error-input">
             <p th:if="${nullPasswordError}" align="right" style="color:red">密码不能为空</p>
             <p th:if="${mismatchPasswordError}" align="right" style="color:red">两次输入的密码不匹配</p>
-            <p th:if="${illegalPasswordError}" align="right" style="color:red">密码不少于4位且由大小写字母和数字组成</p>
+            <p th:if="${illegalPasswordError}" align="right" style="color:red">密码不少于6位且由大小写字母和数字组成</p>
             <p th:if="${nullUserNameError}" align="right" style="color:red">用户名不能为空</p>
             <p th:if="${existedUserNameError}" align="right" style="color:red">用户名已存在</p>
             <p th:if="${illegalUserNameError}" align="right" style="color:red">用户名不少于4位且不含特殊字符（_@和.除外）</p>
