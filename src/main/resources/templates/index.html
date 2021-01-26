@@ -2,26 +2,204 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
+    <title>后台管理系统</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .layui-tab-title .layui-this{background-color:#009688;color:#eee;}.first-tab i.layui-tab-close{display:none !important;}.layui-layout-admin .layui-header{background-color:#1aa094 !important;}.layui-layout-admin .layui-logo{background-color:#0c0c0c !important;}.layuimini-color .color-title{padding:10px 0 10px 20px;border-bottom:1px solid #d9dada;margin-bottom:8px;}.layuimini-color .color-content{padding:0 5px 0 5px;}.layuimini-color .color-content ul{list-style:none;text-align:center;}.layuimini-color .color-content ul li{position:relative;display:inline-block;vertical-align:top;width:80px;height:50px;margin:0 15px 15px 0;padding:2px 2px 4px 2px;background-color:#f2f2f2;cursor:pointer;font-size:12px;color:#666;}.layuimini-color .color-content li.layui-this:after,.layuimini-color .color-content li:hover:after{width:100%;height:100%;padding:4px;top:-5px;left:-5px;border-color:#d8d8d8;opacity:1;}.layuimini-color .color-content li:after{content:'';position:absolute;z-index:20;top:50%;left:50%;width:1px;height:0;border:1px solid #f2f2f2;transition:all .3s;-webkit-transition:all .3s;opacity:0;}
+        .layuimini-tool-left {position:absolute!important;top:0;left:200px;width:60px;height:100%;line-height:60px;text-align:center;color:#ffffff!important;}
+        .closeBox {height:35px !important;}
+        .closeBox > li {line-height:35px !important;}
+        .closeBox {position:absolute;right: -10px;top: 16px;background-color:#fff !important;color:#000;border-bottom:1px solid #e2e2e2;padding:0 10px !important;}
+        .closeBox .layui-nav-item {line-height:40px;}
+        .closeBox .layui-nav-item > a,.closeBox .layui-nav-item > a:hover {color:#000;}
+        .closeBox .layui-nav-child {top:40px;}
+    </style>
+    <style id="layuimini-bg-color">
+    </style>
 </head>
-<body>
-<h1>登录成功</h1>
-<div sec:authorize="isAuthenticated()">
-    登录的用户都可以见
+<!--<body>-->
+<!--<h1>登录成功</h1>-->
+<!--<div sec:authorize="isAuthenticated()">-->
+    <!--登录的用户都可以见-->
+<!--</div>-->
+<!--<br/>-->
+<!--<div sec:authorize="hasRole('ROLE_ADMIN')">-->
+    <!--管理员才可以看见 <br/>-->
+    <!--<a href="admin.html" th:href="@{/admin}">管理页</a>-->
+<!--</div>-->
+<!--<br/>-->
+<!--<div sec:authorize="hasRole('ROLE_USER')">-->
+    <!--用户才可以看见-->
+<!--</div>-->
+<!--<br/>-->
+<!--<br/>-->
+<!--<form th:action="@{/logout}" method="post">-->
+    <!--<input type="submit" value="退出登录"/>-->
+<!--</form>-->
+<!--</body>-->
+
+<!--参考 layui 后台布局-->
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">语种识别系统管理后台</div>
+
+        <a>
+            <div class="layuimini-tool-left"  onclick="iconHide()"><i class="icon-color layui-icon layui-icon-shrink-right" style="color:white" id="hide"></i></div>
+        </a>
+
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item" lay-unselect>
+                <a href="javascript:;" data-refresh="刷新"><i class="layui-icon layui-icon-refresh"></i></a>
+            </li>
+            <li class="layui-nav-item " lay-unselect>
+                <a href="javascript:;" data-check-screen="full"><i class="layui-icon layui-icon-screen-full"></i></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <div><span id="nickName">控制台</span></div>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;" data-id="userProper" data-title="基本资料" data-url="/users/info"
+                           class="menuNvaBar">基本资料</a></dd>
+                    <dd><a href="javascript:;" data-id="userSafe" data-title="安全设置" data-url="/users/password"
+                           class="menuNvaBar">更换密码</a></dd>
+                    <dd><a href="javascript:;" id="logout">退出</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item layuimini-select-bgcolor mobile layui-hide-xs" lay-unselect>
+                <a href="javascript:;" data-bgcolor="配色方案"><i class="layui-icon layui-icon-more-vertical"></i></a>
+            </li>
+        </ul>
+    </div>
+    <!-- 左侧菜单-->
+    <div id="mainmenu" class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div class="navBar layui-side-scroll" id="navBarId">
+                <ul class="layui-nav layui-nav-tree layui-left-nav" onclick="ulHide()">
+                    <!--<li class="layui-nav-item">-->
+                        <!--<a href="javascript:;">-->
+                            <!--<i class="layui-icon layui-icon-user"></i>-->
+                            <!--<cite> 组织管理</cite>-->
+                            <!--<span class="layui-nav-more"></span>-->
+                        <!--</a>-->
+                        <!--<dl class="layui-nav-child">-->
+                            <!--<dd class="layui-this">-->
+                                <!--<a href="javascript:;" data-icon="undefined" data-url="/index/roles" data-title="角色管理"-->
+                                   <!--data-id="53" class="menuNvaBar">-->
+                                    <!--<cite>角色管理</cite>-->
+                                <!--</a>-->
+                            <!--</dd>-->
+                            <!--<dd class="">-->
+                                <!--<a href="javascript:;" data-icon="undefined" data-url="/index/users" data-title="用户管理"-->
+                                   <!--data-id="24" class="menuNvaBar">-->
+                                    <!--<cite>用户管理</cite>-->
+                                <!--</a>-->
+                            <!--</dd>-->
+                        <!--</dl>-->
+                    <!--</li>-->
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-set-fill"></i>
+                            <cite>设备管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="">
+                                <a href="javascript:;" data-icon="" data-url="/index/createClient" data-title="设备创建"
+                                   data-id="27" class="menuNvaBar">
+                                    <cite>设备创建</cite>
+                                </a>
+                            </dd>
+                            <dd class="">
+                                <a href="javascript:;" data-icon="" data-url="/index/clientList" data-title="设备列表"
+                                   data-id="31" class="menuNvaBar">
+                                    <cite>设备列表</cite>
+                                </a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-list"></i>
+                            <cite>数据管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="">
+                                <a href="javascript:;" data-icon="" data-url="/index/sysFiles" data-title="文件管理"
+                                   data-id="50" class="menuNvaBar">
+                                    <cite>文件管理</cite>
+                                </a>
+                            </dd>
+                            <dd class="">
+                                <a href="javascript:;" data-icon="" data-url="/druid/sql.html" data-title="会话管理"
+                                   data-id="2" class="menuNvaBar">
+                                    <cite>会话管理</cite>
+                                </a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <span class="layui-nav-bar" style="top: 112.5px; height: 0px; opacity: 0;"></span>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="layui-tab" lay-filter="tab" lay-allowclose="true">
+            <ul class="layui-tab-title" style="width: 90%">
+                <li class="first-tab layui-this"><i class="layui-icon layui-icon-home"></i> <span>主页</span></li>
+                <li lay-id="27" class="layui-this"><span>文件管理</span><i class="layui-icon layui-unselect layui-tab-close">ဆ</i></li>
+            </ul>
+            <ul class="layui-nav closeBox">
+                <li class="layui-nav-item">
+                    <a href="javascript:;"> <i class="layui-icon layui-icon-circle-dot"></i> 页面操作</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-page-close="other"><i class="layui-icon layui-icon-close"></i> 关闭其他</a></dd>
+                        <dd><a href="javascript:;" data-page-close="all"><i class="layui-icon layui-icon-close-fill"></i> 关闭全部</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe th:src="@{/index/file}" frameborder="0" name="content" width="100%" id="home"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<br/>
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    管理员才可以看见 <br/>
-    <a href="admin.html" th:href="@{/admin}">管理页</a>
-</div>
-<br/>
-<div sec:authorize="hasRole('ROLE_USER')">
-    用户才可以看见
-</div>
-<br/>
-<br/>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="退出登录"/>
-</form>
 </body>
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
+<script src="/js/jquery.js"></script>
+<script src="/js/home.js?v=0.1"></script>
+<script>
+    var layer = layui.layer;
+    var $ = jQuery = layui.jquery;
+    var element = layui.element;
+    initBgColor();
+    $(function () {
+        FrameWH();
+        //退出登录
+        $("#logout").click(function () {
+            logoutDialog();
+        });
+    });
+    //删除前确认对话框
+    var logoutDialog = function () {
+        layer.open({
+            content: '确定要退出登录么？',
+            yes: function (index) {
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            }
+        });
+    };
+    function FrameWH() {
+        var h = $(window).height() - 41 - 10 - 35 - 10 - 44 - 10;
+        $("iframe").css("height", h + "px");
+    };
+</script>
+
 </html>
