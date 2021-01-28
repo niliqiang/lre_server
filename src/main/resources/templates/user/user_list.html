@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/custom.form.css">
+    <style>
+        .custom-tree-item-clicked{color:#FC9003}
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <div class="user_table_div">
+                <div id="searchParam">
+                    <div class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输用户名">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" readonly class="layui-input" id="createTime" placeholder="创建时间">
+                        </div>
+                        <div class="layui-input-inline layui-form">
+                            <select id="status">
+                                <option value="">请选择账号状态</option>
+                                <option value="1">正常</option>
+                                <option value="2">禁用</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline ">
+                            <button class="layui-btn" onclick="search()" id="search">查询</button>
+                        </div>
+                    </div>
+
+                </div>
+                <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="roles" class="demo-transfer" style="display: none"></div>
+</body>
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+            elem: '#userTable'
+            , url:'/user/queryList'
+            , page: true    //开启分页，默认page=1，limit=10
+            , initSort: {   //默认按照时间生序排列
+                field: 'createTime',
+                type: 'asc'
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left', width:'4%'},
+                    {field:'userName', width:'10%', title:'用户名', sort: true},
+                    {field:'mobile', width:'10%', title:'手机号', sort: true},
+                    {field:'email', width:'14%', title:'邮箱', sort: true},
+                    {field:'sex', width:'7%', title:'性别', sort: true,
+                        templet: function (data) {
+                            if (data.sex == 1) return "<span>男</span>";
+                            else return "<span>女</span>";
+                        }
+                    },
+                    {field:'age', width:'7%', title:'年龄', sort: true},
+                    {field:'createTime', width:'15%', title:'创建时间', sort: true,
+                        templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
+                    {field:'updateTime', width:'15%', title:'更新时间', sort: true,
+                        templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
+                    {field:'status', width:'10%', title:'用户状态', sort: true,
+                        templet: function (data) {
+                            if (data.status == 1)
+                                return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
+                            else return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
+                        }
+                    },
+                    {fixed: 'right',title:'操作',width:'8%',
+                        templet: function(data){
+                            return "<a href='' title='删除' class='layui-btn layui-bg-red layui-btn-sm layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></a>";
+                        }
+                    }
+                ]
+            ]
+        });
+    });
+</script>
+</html>

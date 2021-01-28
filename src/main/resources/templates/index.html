@@ -78,27 +78,27 @@
         <div class="layui-side-scroll">
             <div class="navBar layui-side-scroll" id="navBarId">
                 <ul class="layui-nav layui-nav-tree layui-left-nav" onclick="ulHide()">
-                    <!--<li class="layui-nav-item">-->
-                        <!--<a href="javascript:;">-->
-                            <!--<i class="layui-icon layui-icon-user"></i>-->
-                            <!--<cite> 组织管理</cite>-->
-                            <!--<span class="layui-nav-more"></span>-->
-                        <!--</a>-->
-                        <!--<dl class="layui-nav-child">-->
-                            <!--<dd class="layui-this">-->
-                                <!--<a href="javascript:;" data-icon="undefined" data-url="/index/roles" data-title="角色管理"-->
-                                   <!--data-id="53" class="menuNvaBar">-->
-                                    <!--<cite>角色管理</cite>-->
-                                <!--</a>-->
-                            <!--</dd>-->
-                            <!--<dd class="">-->
-                                <!--<a href="javascript:;" data-icon="undefined" data-url="/index/users" data-title="用户管理"-->
-                                   <!--data-id="24" class="menuNvaBar">-->
-                                    <!--<cite>用户管理</cite>-->
-                                <!--</a>-->
-                            <!--</dd>-->
-                        <!--</dl>-->
-                    <!--</li>-->
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <cite> 组织管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="layui-this">
+                                <a href="javascript:;" data-icon="undefined" data-url="/index/roles" data-title="角色管理"
+                                   data-id="53" class="menuNvaBar">
+                                    <cite>角色管理</cite>
+                                </a>
+                            </dd>
+                            <dd class="">
+                                <a href="javascript:;" data-icon="undefined" data-url="/index/users" data-title="用户管理"
+                                   data-id="24" class="menuNvaBar">
+                                    <cite>用户管理</cite>
+                                </a>
+                            </dd>
+                        </dl>
+                    </li>
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-set-fill"></i>
@@ -151,7 +151,7 @@
         <div class="layui-tab" lay-filter="tab" lay-allowclose="true">
             <ul class="layui-tab-title" style="width: 90%">
                 <li class="first-tab layui-this"><i class="layui-icon layui-icon-home"></i> <span>主页</span></li>
-                <li lay-id="27" class="layui-this"><span>文件管理</span><i class="layui-icon layui-unselect layui-tab-close">ဆ</i></li>
+                <li lay-id="27" class="layui-this"><span>用户管理</span><i class="layui-icon layui-unselect layui-tab-close">ဆ</i></li>
             </ul>
             <ul class="layui-nav closeBox">
                 <li class="layui-nav-item">
@@ -164,7 +164,7 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <iframe th:src="@{/index/file}" frameborder="0" name="content" width="100%" id="home"></iframe>
+                    <iframe th:src="@{/index/user}" frameborder="0" name="content" width="100%" id="home"></iframe>
                 </div>
             </div>
         </div>
