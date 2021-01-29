@@ -59,4 +59,12 @@
     select session_id, client_id, session_content, lre_result, create_time
     from lre_server.session_info
   </select>
+  <select id="sessionInfoList" resultMap="BaseResultMap">
+    <!--
+      added by niliqiang
+    -->
+    select session_id, client_id, session_content, lre_result, create_time
+    from lre_server.session_info
+    order by create_time desc
+  </select>
 </mapper>

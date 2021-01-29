@@ -19,13 +19,13 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    SysUserMapper sysUserMapper;
+    private SysUserMapper sysUserMapper;
 
     @Override
     public PageInfo<SysUser> queryUserList(int page, int size) {
         PageHelper.startPage(page, size);
         List<SysUser> sysUserList = sysUserMapper.sysUserList();
-        PageInfo<SysUser> pageUserInfo = new PageInfo<SysUser>(sysUserList);
+        PageInfo<SysUser> pageUserInfo = new PageInfo<>(sysUserList);
         return pageUserInfo;
     }
 

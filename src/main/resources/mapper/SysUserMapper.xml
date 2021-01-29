@@ -88,8 +88,8 @@
     <!--
       added by niliqiang
     -->
-    select user_name, mobile, email, sex, age, create_time, update_time,
-    status
+    select user_name, mobile, email, sex, age, status, create_time,
+    update_time
     from lre_server.sys_user
     order by create_time
   </select>

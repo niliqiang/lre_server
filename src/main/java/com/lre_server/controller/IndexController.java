@@ -20,9 +20,9 @@ public class IndexController {
     }
 
     @GetMapping("/user/info")
-    public String userDetail(Model model) {
+    public String userInfo(Model model) {
         model.addAttribute("flagType", "edit");
-        return "user/user_edit";
+        return "user/user_info";
     }
 
     @GetMapping("/user")
@@ -31,8 +31,23 @@ public class IndexController {
     }
 
     @GetMapping("/file")
-    public String sysFiles() {
+    public String fileList() {
         return "file/file_list";
+    }
+
+    @GetMapping("/client/add")
+    public String addClient() {
+        return "client/client_add";
+    }
+
+    @GetMapping("/client")
+    public String clientList() {
+        return "client/client_list";
+    }
+
+    @GetMapping("/session")
+    public String sessionList() {
+        return "session/session_list";
     }
 
 }

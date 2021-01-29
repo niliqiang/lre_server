@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户管理</title>
+    <title>设备列表</title>
     <link rel="stylesheet" href="/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/css/custom.form.css">
 </head>
@@ -14,16 +14,20 @@
                 <div id="searchParam">
                     <div class="layui-form-item">
                         <div class="layui-input-inline">
-                            <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输入用户名">
+                            <input type="text" id="clientId" class="layui-input" autocomplete="off" placeholder="请输入设备 ID">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" id="clientName" class="layui-input" autocomplete="off" placeholder="请输入设备名称">
                         </div>
                         <div class="layui-input-inline">
                             <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
                         </div>
                         <div class="layui-input-inline layui-form">
                             <select id="status">
-                                <option value="">请选择账号状态</option>
-                                <option value="1">正常</option>
-                                <option value="2">禁用</option>
+                                <option value="">请选择设备认证状态</option>
+                                <option value="0">未认证</option>
+                                <option value="1">认证通过</option>
+                                <option value="2">认证失败</option>
                             </select>
                         </div>
                         <div class="layui-input-inline ">
@@ -32,7 +36,7 @@
                     </div>
 
                 </div>
-                <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
+                <table class="layui-hide" id="clientTable" lay-filter="clientTable"></table>
             </div>
         </div>
     </div>
@@ -45,8 +49,8 @@
     layui.use('table', function(){
         var table = layui.table;
         table.render({
-            elem: '#userTable'
-            , url:'/user/queryList'
+            elem: '#clientTable'
+            , url:'/client/queryList'
             , page: true    //开启分页，默认page=1，limit=10
             , initSort: {   //默认按照时间倒序排列
                 field: 'createTime',
@@ -55,30 +59,36 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left', width:'4%'},
-                    {field:'userName', width:'10%', title:'用户名', sort: true},
-                    {field:'mobile', width:'10%', title:'手机号', sort: true},
-                    {field:'email', width:'14%', title:'邮箱', sort: true},
-                    {field:'sex', width:'7%', title:'性别', sort: true,
+                    {field:'clientId', width:'25%', title:'设备 ID'},
+                    {field:'clientName', width:'15%', title:'设备名称', sort: true},
+                    {field:'clientType', width:'8.5%', title:'设备类型', sort: true,
                         templet: function (data) {
-                            if (data.sex == 1) return "<span>男</span>";
-                            else return "<span>女</span>";
+                            if (data.clientType == 1) return "<span>音箱</span>";
+                            else if (data.clientType == 2) return "<span>机器人</span>";
+                            else return "<span>其他</span>";
                         }
                     },
-                    {field:'age', width:'7%', title:'年龄', sort: true},
+                    {field:'clientOs', width:'8.5%', title:'操作系统', sort: true,
+                        templet: function (data) {
+                            if (data.clientOs == 1) return "<span>Linux</span>";
+                            else if (data.clientOs == 2) return "<span>Android</span>";
+                            else return "<span>其他</span>";
+                        }
+                    },
                     {field:'createTime', width:'15%', title:'创建时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'updateTime', width:'15%', title:'更新时间', sort: true,
-                        templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'status', width:'10%', title:'用户状态', sort: true,
+                    {field:'status', width:'10%', title:'认证状态', sort: true,
                         templet: function (data) {
                             if (data.status == 1)
                                 return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
                             else return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
                         }
                     },
-                    {fixed: 'right',title:'操作',width:'8%',
+                    {fixed: 'right',title:'操作',width:'14%',
                         templet: function(data){
-                            return "<a href='' title='删除' class='layui-btn layui-bg-red layui-btn-sm layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></a>";
+                            return "<a href='' title='详情' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe60b;</icon></a>"+
+                                "<a href='' title='修改' class='layui-btn layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe642;</icon></a>"+
+                                "<a href='' title='删除' class='layui-btn layui-bg-red layui-btn-xs layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></a>";
                         }
                     }
                 ]

@@ -19,13 +19,13 @@ import java.util.List;
 @Service
 public class FileServiceImpl implements FileService {
     @Autowired
-    FileInfoMapper fileInfoMapper;
+    private FileInfoMapper fileInfoMapper;
 
     @Override
-    public PageInfo<FileInfo> queryFilesList(int page, int size) {
+    public PageInfo<FileInfo> queryFileList(int page, int size) {
         PageHelper.startPage(page, size);
         List<FileInfo> fileInfoList = fileInfoMapper.fileInfoList();
-        PageInfo<FileInfo> pageFileInfo = new PageInfo<FileInfo>(fileInfoList);
+        PageInfo<FileInfo> pageFileInfo = new PageInfo<>(fileInfoList);
         return pageFileInfo;
     }
 }

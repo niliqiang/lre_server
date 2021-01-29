@@ -67,7 +67,7 @@
     <!--
       added by niliqiang
     -->
-    select file_name, create_time, lre_result, status
+    select file_name, lre_result, status, create_time
     from lre_server.file_info
     order by create_time desc
   </select>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>设备创建</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/custom.form.css">
+</head>
+<body>
+<div class="panel panel-default operation">
+    <div class="panel-heading title">创建虚拟设备</div>
+    <div class="layui-card-body">
+        <form class="layui-form " action="" lay-filter="info" style="width: 700px;margin-top: 10px">
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备 ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="clientId" readonly="readonly" style="background:#eeeeee!important"
+                           autocomplete="off" value="c2c375d336354d2b9c033cb29c31071f" class="layui-input ">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="clientName" placeholder="请输入设备名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备类型</label>
+                <div class="layui-input-block">
+                    <select name="clientType" lay-filter="clientType">
+                        <option value="">请选择设备类型</option>
+                        <option value="0">音箱</option>
+                        <option value="1">机器人</option>
+                        <option value="2">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">操作系统</label>
+                <div class="layui-input-block">
+                    <select name="clientOS" lay-filter="clientOS">
+                        <option value="">请选择设备操作系统</option>
+                        <option value="0">Linux</option>
+                        <option value="1">Android</option>
+                        <option value="2">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备简介</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入设备简介" class="layui-textarea" name="clientDesc"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">提交认证</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
+</html>

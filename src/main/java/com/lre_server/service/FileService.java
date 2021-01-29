@@ -10,5 +10,5 @@ import com.lre_server.entity.FileInfo;
  * @Description: TODO
  */
 public interface FileService {
-    PageInfo<FileInfo> queryFilesList(int page, int size);
+    PageInfo<FileInfo> queryFileList(int page, int size);
 }
