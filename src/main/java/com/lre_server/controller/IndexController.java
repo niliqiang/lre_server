@@ -19,6 +19,11 @@ public class IndexController {
         return "home";
     }
 
+    @GetMapping("/login")
+    public String indexLogin() {
+        return "login";
+    }
+
     @GetMapping("/user/info")
     public String userInfo(Model model) {
         model.addAttribute("flagType", "edit");

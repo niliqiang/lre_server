@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
 <head>
     <meta charset="utf-8">
     <title>主页</title>
@@ -23,22 +23,22 @@
     <div class="layuimini-main layui-top-box">
         <div class="layui-row layui-col-space10">
 
-            <!--<div class="layui-col-md4">-->
-                <!--<div class="col-xs-6 col-md-4">-->
-                    <!--<div class="panel layui-bg-cyan">-->
-                        <!--<div class="panel-body">-->
-                            <!--<div class="panel-title">-->
-                                <!--<span class="label pull-right layui-bg-green">实时</span>-->
-                                <!--<h3>用户统计</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-content">-->
-                                <!--<h1 class="no-margins">2</h1>-->
-                                <!--<small>系统总记录数</small>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+            <div class="layui-col-md4" sec:authorize="hasRole('ROLE_ADMIN')">
+                <div class="col-xs-6 col-md-4">
+                    <div class="panel layui-bg-cyan">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <span class="label pull-right layui-bg-green">实时</span>
+                                <h3>用户统计</h3>
+                            </div>
+                            <div class="panel-content">
+                                <h1 class="no-margins">2</h1>
+                                <small>系统总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="layui-col-md6">
                 <div class="col-xs-6 col-md-6">
