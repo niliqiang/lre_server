@@ -49,5 +49,16 @@ public interface UserClientMapper {
      */
     int updateByPrimaryKey(UserClient record);
 
+    /**
+     * 查询用户的设备列表
+     * @return
+     */
     List<UserClient> userClientList();
+
+    /**
+     * 根据设备名称查询设备
+     * @param clientName
+     * @return
+     */
+    UserClient selectByClientName(String clientName);
 }

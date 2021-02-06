@@ -11,4 +11,5 @@ import com.lre_server.entity.SysUser;
  */
 public interface UserService {
     PageInfo<SysUser> queryUserList(int page, int size);
+    SysUser queryByUserName(String userName);
 }

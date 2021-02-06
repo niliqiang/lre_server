@@ -5,6 +5,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.UUID;
+
 /**
  * @ClassName: IndexController
  * @Author: niliqiang
@@ -24,6 +26,11 @@ public class IndexController {
         return "login";
     }
 
+    @GetMapping("/error")
+    public String indexError() {
+        return "error";
+    }
+
     @GetMapping("/user/info")
     public String userInfo(Model model) {
         model.addAttribute("flagType", "edit");
@@ -41,7 +48,8 @@ public class IndexController {
     }
 
     @GetMapping("/client/add")
-    public String addClient() {
+    public String addClient(Model model) {
+        model.addAttribute("clientUUID", UUID.randomUUID().toString().replace("-", ""));
         return "client/client_add";
     }
 

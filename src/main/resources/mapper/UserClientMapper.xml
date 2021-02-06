@@ -79,4 +79,13 @@
     where user_id = 2
     order by create_time desc
   </select>
+  <select id="selectByClientName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!--
+      added by niliqiang
+    -->
+    select client_id, client_name, client_type, client_OS, client_info, status,
+    create_time
+    from lre_server.user_client
+    where client_name = #{clientName,jdbcType=VARCHAR}
+  </select>
 </mapper>

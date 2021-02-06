@@ -29,4 +29,10 @@ public class UserServiceImpl implements UserService {
         return pageUserInfo;
     }
 
+    @Override
+    public SysUser queryByUserName(String userName) {
+        SysUser sysUser = sysUserMapper.selectByUserName(userName);
+        return sysUser;
+    }
+
 }

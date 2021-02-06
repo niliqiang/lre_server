@@ -67,8 +67,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login");
+
         // 允许页面在 frame 中展示
         http.headers().frameOptions().disable();
+        // 关闭csrf验证
+        http.csrf().disable();
     }
 
 }

@@ -59,10 +59,8 @@
                     <div><span id="console">控制台</span></div>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" data-id="userProper" data-title="基本资料" data-url="/index/user/info"
+                    <dd><a href="javascript:;" data-id="userInfo" data-title="基本资料" data-url="/index/user/info"
                            class="menuNvaBar">基本资料</a></dd>
-                    <dd><a href="javascript:;" data-id="userSafe" data-title="安全设置" data-url="/user/password"
-                           class="menuNvaBar">更换密码</a></dd>
                     <dd><a href="javascript:;" id="logout">退出</a></dd>
                 </dl>
             </li>
@@ -160,7 +158,6 @@
     initBgColor();
     $(function () {
         FrameWH();
-
         $(document).on('click', '.menuNvaBar', function () {
             var dataid = $(this);
             if ($(".layui-tab-title li[lay-id]").length <= 0) {

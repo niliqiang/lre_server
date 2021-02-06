@@ -49,7 +49,16 @@ public interface SysUserMapper {
      */
     int updateByPrimaryKey(SysUser record);
 
+    /**
+     * 根据用户名查询用户信息
+     * @param userName
+     * @return
+     */
     SysUser selectByUserName(String userName);
 
+    /**
+     * 查询用户列表
+     * @return
+     */
     List<SysUser> sysUserList();
 }

@@ -32,9 +32,10 @@ var CoreUtil = (function () {
             type: method,
             contentType: 'application/json; charset=UTF-8',
             dataType: "json",
-            beforeSend: function(request) {
-                request.setRequestHeader("authorization", CoreUtil.getData("access_token"));
-            },
+            // beforeSend: function(request) {
+            //     request.setRequestHeader("authorization", CoreUtil.getData("access_token"));
+            //     console.log(CoreUtil.getData("access_token"));
+            // },
             success: function (res) {
                 top.layer.close(loadIndex);
                 if (res.code==0){
@@ -45,18 +46,17 @@ var CoreUtil = (function () {
                     layer.msg("凭证过期请重新登录", {time:2000}, function () {
                         top.window.location.href="/index/login"
                     })
-                }else if(res.code==401008){ //凭证过期重新登录
-                    layer.msg("抱歉！您暂无权限", {time:2000})
-                } else {
+                }else {
                     layer.msg(res.msg);
                 }
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 top.layer.close(loadIndex);
+                console.log(XMLHttpRequest.status);
                 if(XMLHttpRequest.status==404){
-                    top.window.location.href="/index/404";
+                    top.window.location.href="/index/error";
                 }else{
-                    layer.msg("服务器好像除了点问题！请稍后试试");
+                    layer.msg("服务器好像出了点问题！请稍后试试");
                 }
             }
         })

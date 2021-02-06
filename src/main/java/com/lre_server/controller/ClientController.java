@@ -2,12 +2,12 @@ package com.lre_server.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.lre_server.common.tools.JsonResult;
+import com.lre_server.entity.UserClient;
 import com.lre_server.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -34,5 +34,12 @@ public class ClientController {
         jo.put("count", pageObj.getTotal());
         jo.put("data", clientList);
         return jo.toString();
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult addUserClient(@RequestBody UserClient userClient) {
+        JsonResult jsonResult = clientService.addClient(userClient);
+        return jsonResult;
     }
 }

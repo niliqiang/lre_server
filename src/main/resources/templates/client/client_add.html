@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
 <head>
     <meta charset="UTF-8">
     <title>设备创建</title>
@@ -15,7 +15,7 @@
                 <label class="layui-form-label">设备 ID</label>
                 <div class="layui-input-block">
                     <input type="text" name="clientId" readonly="readonly" style="background:#eeeeee!important"
-                           autocomplete="off" value="c2c375d336354d2b9c033cb29c31071f" class="layui-input ">
+                           autocomplete="off" th:value="${clientUUID}" class="layui-input ">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -29,27 +29,27 @@
                 <div class="layui-input-block">
                     <select name="clientType" lay-filter="clientType">
                         <option value="">请选择设备类型</option>
-                        <option value="0">音箱</option>
-                        <option value="1">机器人</option>
-                        <option value="2">其他</option>
+                        <option value="1">音箱</option>
+                        <option value="2">机器人</option>
+                        <option value="3">其他</option>
                     </select>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">操作系统</label>
                 <div class="layui-input-block">
-                    <select name="clientOS" lay-filter="clientOS">
+                    <select name="clientOs" lay-filter="clientOs">
                         <option value="">请选择设备操作系统</option>
-                        <option value="0">Linux</option>
-                        <option value="1">Android</option>
-                        <option value="2">其他</option>
+                        <option value="1">Linux</option>
+                        <option value="2">Android</option>
+                        <option value="3">其他</option>
                     </select>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">设备简介</label>
                 <div class="layui-input-block">
-                    <textarea placeholder="请输入设备简介" class="layui-textarea" name="clientDesc"></textarea>
+                    <textarea placeholder="请输入设备简介" class="layui-textarea" name="clientInfo"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -62,5 +62,20 @@
 </div>
 </body>
 <script src="/layui/layui.all.js"></script>
-<script src="/js/core.util.js"></script>
+<script src="/js/core.util.js?v=0.3"></script>
+<script>
+    var layer = layui.layer;
+    var $ = jQuery = layui.jquery;
+    var form = layui.form;
+    $(function () {
+        //监听提交
+        form.on('submit(submit)', function (data) {
+            console.log(data);
+            CoreUtil.sendPost("/client/add", data.field, function (res) {
+                layer.msg(res.msg);
+            });
+            return false;
+        });
+    });
+</script>
 </html>
