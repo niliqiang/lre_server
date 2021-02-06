@@ -31,8 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SysUser queryByUserName(String userName) {
-        SysUser sysUser = sysUserMapper.selectByUserName(userName);
-        return sysUser;
+        return sysUserMapper.selectByUserName(userName);
     }
 
 }
