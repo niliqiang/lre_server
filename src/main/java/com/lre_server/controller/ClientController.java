@@ -39,7 +39,6 @@ public class ClientController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public JsonResult addUserClient(@RequestBody UserClient userClient) {
-        JsonResult jsonResult = clientService.addClient(userClient);
-        return jsonResult;
+        return clientService.addClient(userClient);
     }
 }

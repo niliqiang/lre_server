@@ -42,4 +42,10 @@ public class UserController {
         return JsonResult.success(userService.queryByUserName(userName));
     }
 
+    @RequestMapping(value = "/info/update", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult queryUser(@RequestBody SysUser sysUser) {
+        return userService.updateByUserName(sysUser);
+    }
+
 }
