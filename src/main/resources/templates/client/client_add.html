@@ -64,10 +64,9 @@
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js?v=0.3"></script>
 <script>
-    var layer = layui.layer;
-    var $ = jQuery = layui.jquery;
-    var form = layui.form;
     $(function () {
+        var layer = layui.layer;
+        var form = layui.form;
         //监听提交
         form.on('submit(submit)', function (data) {
             console.log(data);

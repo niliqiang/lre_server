@@ -62,10 +62,10 @@
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js?v=0.3"></script>
 <script th:inline="javascript"><!--这句是获取userName的重点-->
-    var layer = layui.layer;
-    var $ = jQuery = layui.jquery;
-    var form = layui.form;
     $(function () {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var form = layui.form;
         var userName = [[${userName}]];
         CoreUtil.sendGet("/user/info/"+userName, null, function (res) {
             if (res.data != null) {

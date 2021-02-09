@@ -26,7 +26,7 @@ public class UserController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryList(@RequestParam("page") Integer pageNum, @RequestParam("limit") Integer pageSize) {
+    public String queryUserList(@RequestParam("page") Integer pageNum, @RequestParam("limit") Integer pageSize) {
         PageInfo pageObj = userService.queryUserList(pageNum, pageSize);
         List<Map<String, Object>> userList=pageObj.getList();
         JSONObject jo=new JSONObject();
@@ -38,13 +38,13 @@ public class UserController {
 
     @RequestMapping(value = "/info/{userName}")
     @ResponseBody
-    public JsonResult queryUser(@PathVariable("userName") String userName) {
+    public JsonResult queryUserInfo(@PathVariable("userName") String userName) {
         return JsonResult.success(userService.queryByUserName(userName));
     }
 
     @RequestMapping(value = "/info/update", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult queryUser(@RequestBody SysUser sysUser) {
+    public JsonResult updateUserInfo(@RequestBody SysUser sysUser) {
         return userService.updateByUserName(sysUser);
     }
 

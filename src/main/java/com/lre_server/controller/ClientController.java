@@ -26,7 +26,7 @@ public class ClientController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryList(UserClient userClient) {
+    public String queryClientList(UserClient userClient) {
         PageInfo pageObj = clientService.queryClientList(userClient);
         List<Map<String, Object>> clientList=pageObj.getList();
         JSONObject jo=new JSONObject();
@@ -40,5 +40,17 @@ public class ClientController {
     @ResponseBody
     public JsonResult addUserClient(@RequestBody UserClient userClient) {
         return clientService.addClient(userClient);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @ResponseBody
+    public JsonResult deleteUserClient(@RequestBody List<String> userClientIds) {
+        return clientService.deleteClient(userClientIds);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult updateUserClient(@RequestBody UserClient userClient) {
+        return clientService.updateClient(userClient);
     }
 }

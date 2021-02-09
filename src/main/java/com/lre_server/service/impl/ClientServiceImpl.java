@@ -55,8 +55,22 @@ public class ClientServiceImpl implements ClientService {
             userClient.setStatus((byte)0);
             userClient.setCreateTime(new Date());
             userClientMapper.insert(userClient);
-            return JsonResult.success();
+            return JsonResult.success("设备信息提交成功");
         }
         return JsonResult.getResult(ResponseCode.TOKEN_ERROR);
+    }
+
+    @Override
+    public JsonResult deleteClient(List<String> userClientIds) {
+        for (String clientId : userClientIds) {
+            userClientMapper.deleteByPrimaryKey(clientId);
+        }
+        return JsonResult.success("设备删除成功");
+    }
+
+    @Override
+    public JsonResult updateClient(UserClient userClient) {
+        userClientMapper.updateByPrimaryKey(userClient);
+        return JsonResult.success("设备信息提交成功");
     }
 }
