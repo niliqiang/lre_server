@@ -69,14 +69,29 @@
     create_time
     from lre_server.user_client
   </select>
-  <select id="userClientList" resultMap="BaseResultMap">
+  <select id="selectUserClientList" resultMap="BaseResultMap">
     <!--
       added by niliqiang
     -->
     select client_id, client_name, client_type, client_OS, client_info, status,
     create_time
     from lre_server.user_client
-    where user_id = 2
+    where user_id = #{userClient.userId,jdbcType=INTEGER}
+    <if test="userClient.clientId != null and userClient.clientId != ''">
+      and client_id like concat('%',#{userClient.clientId},'%')
+    </if>
+    <if test="userClient.clientName != null and userClient.clientName != ''">
+      and client_name like concat('%',#{userClient.clientName},'%')
+    </if>
+    <if test="userClient.status != null">
+      and status like concat('%',#{userClient.status},'%')
+    </if>
+    <if test="userClient.startTime != null and userClient.endTime != null and userClient.startTime != '' and userClient.endTime != ''">
+      <![CDATA[
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') >=  DATE_FORMAT(#{userClient.startTime}, '%Y-%m-%d %H:%i:%S')
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') <=  DATE_FORMAT(#{userClient.endTime}, '%Y-%m-%d %H:%i:%S')
+      ]]>
+    </if>
     order by create_time desc
   </select>
   <select id="selectByClientName" parameterType="java.lang.String" resultMap="BaseResultMap">

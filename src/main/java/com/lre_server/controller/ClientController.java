@@ -26,8 +26,8 @@ public class ClientController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryList(@RequestParam("page") Integer pageNum, @RequestParam("limit") Integer pageSize) {
-        PageInfo pageObj = clientService.queryClientList(pageNum, pageSize);
+    public String queryList(UserClient userClient) {
+        PageInfo pageObj = clientService.queryClientList(userClient);
         List<Map<String, Object>> clientList=pageObj.getList();
         JSONObject jo=new JSONObject();
         jo.put("code", 0);

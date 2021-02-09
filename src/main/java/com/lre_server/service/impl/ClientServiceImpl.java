@@ -31,9 +31,15 @@ public class ClientServiceImpl implements ClientService {
     private UserService userService;
 
     @Override
-    public PageInfo<UserClient> queryClientList(int page, int size) {
-        PageHelper.startPage(page, size);
-        List<UserClient> userClientList = userClientMapper.userClientList();
+    public PageInfo<UserClient> queryClientList(UserClient userClient) {
+        PageHelper.startPage(userClient.getPage(), userClient.getLimit());
+        // 获取当前登录的用户信息
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
+        }
+        List<UserClient> userClientList = userClientMapper.selectUserClientList(userClient);
         PageInfo<UserClient> pageClientInfo = new PageInfo<>(userClientList);
         return pageClientInfo;
     }

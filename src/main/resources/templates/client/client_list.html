@@ -45,10 +45,21 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js"></script>
+<script src="/js/jquery.js"></script>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="batchDeleted" >批量删除</button>
+    </div>
+</script>
 <script>
-    layui.use('table', function(){
-        var table = layui.table;
-        table.render({
+    var tableIns;
+    var table = layui.table;
+    var $ = jQuery = layui.jquery;
+    var laydate = layui.laydate;
+    var startTime = null;
+    var endTime = null;
+    layui.use(['table', 'layer', 'laydate'], function(){
+        tableIns = table.render({
             elem: '#clientTable'
             , url:'/client/queryList'
             , page: true    //开启分页，默认page=1，limit=10
@@ -60,7 +71,7 @@
                 [
                     {type: 'checkbox', fixed: 'left', width:'4%'},
                     {field:'clientId', width:'25%', title:'设备 ID'},
-                    {field:'clientName', width:'15%', title:'设备名称', sort: true},
+                    {field:'clientName', width:'14%', title:'设备名称', sort: true},
                     {field:'clientType', width:'8.5%', title:'设备类型', sort: true,
                         templet: function (data) {
                             if (data.clientType == 1) return "<span>音箱</span>";
@@ -77,11 +88,13 @@
                     },
                     {field:'createTime', width:'15%', title:'创建时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'status', width:'10%', title:'认证状态', sort: true,
+                    {field:'status', width:'11%', title:'认证状态', sort: true,
                         templet: function (data) {
                             if (data.status == 1)
-                                return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
-                            else return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
+                                return '<input type="checkbox" lay-skin="switch" lay-text="认证通过" checked disabled>';
+                            else if (data.status == -1)
+                                return '<input type="checkbox" lay-skin="switch" lay-text="认证通过|认证失败" disabled>';
+                            else return '<input type="checkbox" lay-skin="switch" lay-text="认证通过|未认证" disabled>';
                         }
                     },
                     {fixed: 'right',title:'操作',width:'14%',
@@ -93,7 +106,39 @@
                     }
                 ]
             ]
+            , toolbar: '#toolbar'
+        });
+
+        laydate.render({
+            elem: '#createTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    startTime = value.split("~")[0];
+                    endTime = value.split("~")[1];
+                } else {
+                    startTime = null;
+                    endTime = null;
+                }
+            }
         });
     });
+    //执行查询
+    function search() {
+        //这里以搜索为例
+        tableIns.reload({
+            where: { //设定异步数据接口的额外参数
+                clientId: $("#clientId").val(),
+                clientName: $("#clientName").val(),
+                startTime: startTime,
+                endTime: endTime,
+                status: $("#status").val()
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    };
 </script>
 </html>

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @ClassName: RegisterController
@@ -111,6 +112,8 @@ public class RegisterController {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             String password = bCryptPasswordEncoder.encode(sysUser.getPassword());
             sysUser.setPassword(password);
+            sysUser.setStatus((byte)0);
+            sysUser.setCreateTime(new Date());
             // 写入数据库
             sysUserMapper.insert(sysUser);
             //  重定向到 login 页面

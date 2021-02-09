@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
+            <label class="layui-form-label">用户状态</label>
             <div class="layui-input-block">
                 <input th:if="${flagType} eq 'edit'" type="checkbox" name="status" lay-skin="switch" lay-text="正常|禁用"
                        lay-filter="switch" checked="checked" disabled="disabled">
@@ -52,7 +52,7 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">更新基本资料</button>
             </div>
         </div>
     </form>

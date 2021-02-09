@@ -11,7 +11,7 @@ import com.lre_server.entity.UserClient;
  * @Description: TODO
  */
 public interface ClientService {
-    PageInfo<UserClient> queryClientList(int page, int size);
+    PageInfo<UserClient> queryClientList(UserClient userClient);
 
     /**
      * 用户创建虚拟设备

@@ -2,6 +2,7 @@ package com.lre_server.dao;
 
 import com.lre_server.entity.UserClient;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public interface UserClientMapper {
      * 查询用户的设备列表
      * @return
      */
-    List<UserClient> userClientList();
+    List<UserClient> selectUserClientList(@Param(value = "userClient") UserClient userClient);
 
     /**
      * 根据设备名称查询设备
