@@ -14,6 +14,11 @@ import java.util.List;
  * @Description: TODO
  */
 public interface ClientService {
+    /**
+     * 查询设备列表
+     * @param userClient
+     * @return
+     */
     PageInfo<UserClient> queryClientList(UserClient userClient);
 
     /**

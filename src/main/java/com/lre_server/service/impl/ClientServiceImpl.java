@@ -39,7 +39,7 @@ public class ClientServiceImpl implements ClientService {
             String currentUserName = authentication.getName();
             userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
         }
-        List<UserClient> userClientList = userClientMapper.selectUserClientList(userClient);
+        List<UserClient> userClientList = userClientMapper.selectClientList(userClient);
         PageInfo<UserClient> pageClientInfo = new PageInfo<>(userClientList);
         return pageClientInfo;
     }

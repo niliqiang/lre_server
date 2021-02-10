@@ -59,12 +59,28 @@
     select session_id, client_id, session_content, lre_result, create_time
     from lre_server.session_info
   </select>
-  <select id="sessionInfoList" resultMap="BaseResultMap">
+  <select id="selectSessionList" resultMap="BaseResultMap">
     <!--
       added by niliqiang
     -->
     select session_id, client_id, session_content, lre_result, create_time
     from lre_server.session_info
+    where client_id in (select client_id from lre_server.user_client where user_id = #{userId,jdbcType=INTEGER})
+    <if test="sessionInfo.sessionId != null and sessionInfo.sessionId != ''">
+      and session_id like concat('%',#{sessionInfo.sessionId},'%')
+    </if>
+    <if test="sessionInfo.clientId != null and sessionInfo.clientId != ''">
+      and session_id like concat('%',#{sessionInfo.clientId},'%')
+    </if>
+    <if test="sessionInfo.lreResult != null">
+      and lre_result = #{sessionInfo.lreResult,jdbcType=TINYINT}
+    </if>
+    <if test="sessionInfo.startTime != null and sessionInfo.endTime != null and sessionInfo.startTime != '' and sessionInfo.endTime != ''">
+      <![CDATA[
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') >=  DATE_FORMAT(#{sessionInfo.startTime}, '%Y-%m-%d %H:%i:%S')
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') <=  DATE_FORMAT(#{sessionInfo.endTime}, '%Y-%m-%d %H:%i:%S')
+      ]]>
+    </if>
     order by create_time desc
   </select>
 </mapper>

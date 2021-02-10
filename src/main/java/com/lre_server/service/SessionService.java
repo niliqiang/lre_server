@@ -1,7 +1,10 @@
 package com.lre_server.service;
 
 import com.github.pagehelper.PageInfo;
+import com.lre_server.common.tools.JsonResult;
 import com.lre_server.entity.SessionInfo;
+
+import java.util.List;
 
 /**
  * @InterfaceName: SessionService
@@ -10,5 +13,17 @@ import com.lre_server.entity.SessionInfo;
  * @Description: TODO
  */
 public interface SessionService {
-    PageInfo<SessionInfo> querySessionList(int page, int size);
+    /**
+     * 查询会话列表
+     * @param sessionInfo
+     * @return
+     */
+    PageInfo<SessionInfo> querySessionList(SessionInfo sessionInfo);
+
+    /**
+     * 删除会话
+     * @param sessionIds
+     * @return
+     */
+    JsonResult deleteSession(List<String> sessionIds);
 }

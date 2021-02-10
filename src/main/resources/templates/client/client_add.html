@@ -21,7 +21,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">设备名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="clientName" placeholder="请输入设备名称" autocomplete="off" class="layui-input">
+                    <input type="text" name="clientName" placeholder="请输入设备名称" autocomplete="off" lay-verify="required"class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -64,12 +64,12 @@
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js?v=0.3"></script>
 <script>
+    var $ = layui.jquery;
     $(function () {
         var layer = layui.layer;
         var form = layui.form;
         //监听提交
         form.on('submit(submit)', function (data) {
-            console.log(data);
             CoreUtil.sendPost("/client/add", data.field, function (res) {
                 layer.msg(res.msg);
             });

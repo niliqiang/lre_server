@@ -69,7 +69,7 @@
     create_time
     from lre_server.user_client
   </select>
-  <select id="selectUserClientList" resultMap="BaseResultMap">
+  <select id="selectClientList" resultMap="BaseResultMap">
     <!--
       added by niliqiang
     -->
@@ -84,7 +84,7 @@
       and client_name like concat('%',#{userClient.clientName},'%')
     </if>
     <if test="userClient.status != null">
-      and status like concat('%',#{userClient.status},'%')
+      and status = #{userClient.status,jdbcType=TINYINT}
     </if>
     <if test="userClient.startTime != null and userClient.endTime != null and userClient.startTime != '' and userClient.endTime != ''">
       <![CDATA[

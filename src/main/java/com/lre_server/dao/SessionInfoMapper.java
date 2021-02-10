@@ -2,6 +2,7 @@ package com.lre_server.dao;
 
 import com.lre_server.entity.SessionInfo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -49,5 +50,6 @@ public interface SessionInfoMapper {
      */
     int updateByPrimaryKey(SessionInfo record);
 
-    List<SessionInfo> sessionInfoList();
+
+    List<SessionInfo> selectSessionList(@Param(value = "sessionInfo") SessionInfo sessionInfo, @Param(value = "userId") int userId);
 }

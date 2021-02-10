@@ -38,19 +38,19 @@ public class ClientController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult addUserClient(@RequestBody UserClient userClient) {
+    public JsonResult addClient(@RequestBody UserClient userClient) {
         return clientService.addClient(userClient);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public JsonResult deleteUserClient(@RequestBody List<String> userClientIds) {
+    public JsonResult deleteClient(@RequestBody List<String> userClientIds) {
         return clientService.deleteClient(userClientIds);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult updateUserClient(@RequestBody UserClient userClient) {
+    public JsonResult updateClient(@RequestBody UserClient userClient) {
         return clientService.updateClient(userClient);
     }
 }

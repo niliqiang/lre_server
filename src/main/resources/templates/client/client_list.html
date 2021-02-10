@@ -100,7 +100,7 @@
         <button class="layui-btn layui-btn-sm" lay-event="batchDeleted" >批量删除</button>
     </div>
 </script>
-<script type="text/html" id="tool">
+<script type="text/html" id="operate">
     <a title="详情" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail"><icon class="layui-icon">&#xe60b;</icon></a>
     <a title="编辑" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit"><icon class="layui-icon">&#xe642;</icon></a>
     <a title="删除" class="layui-btn layui-bg-red layui-btn-xs layui-btn-normal" lay-event="delete"><icon class="layui-icon">&#xe640;</icon></a>
@@ -109,12 +109,12 @@
     var tableIns;
     var startTime = null;
     var endTime = null;
+    var $ = layui.jquery;
     layui.use(['table', 'layer', 'laydate'], function(){
         var table = layui.table;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var form = layui.form;
-        var $ = layui.jquery;
         tableIns = table.render({
             elem: '#clientTable'
             , url:'/client/queryList'
@@ -153,7 +153,7 @@
                             else return '<input type="checkbox" lay-skin="switch" lay-text="认证通过|未认证" disabled>';
                         }
                     },
-                    {fixed: 'right', toolbar: "#tool", title:'操作',width:'14%'}
+                    {fixed: 'right', toolbar: "#operate", title:'操作',width:'14%'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -233,7 +233,7 @@
                                 "设备类型": data.clientType==1?"音箱":data.clientType==2?"机器人":"其他",
                                 "操作系统": data.clientOs==1?"Linux":data.clientOs==2?"Android":"其他",
                                 "设备简介": data.clientInfo,
-                                "创建时间": new Date(data.createTime).toLocaleString(),
+                                "创建时间": layui.util.toDateString(data.createTime, "yyyy-MM-dd HH:mm:ss"),
                                 "认证状态": data.status==0?"未认证":data.clientOs==1?"认证通过":"认证失败"
                             };
                             $("#json-renderer").jsonViewer(jsonObj);
@@ -247,7 +247,7 @@
 
         var tipDialog = function (clientIds, clientName) {
             layer.open({
-                content: '确定要删除' + clientName + "设备吗?",
+                content: "确定要删除 " + clientName + " 设备吗?",
                 yes: function (index, layero) {
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendDelete("/client/delete", clientIds, function (res) {

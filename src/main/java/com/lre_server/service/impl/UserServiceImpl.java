@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         sysUser.setCreateTime(record.getCreateTime());
         sysUser.setUpdateTime(new Date());
         sysUserMapper.updateByPrimaryKey(sysUser);
-        return JsonResult.success("用户信息保存成功");
+        return JsonResult.success("用户基本资料更新成功");
     }
 
 }

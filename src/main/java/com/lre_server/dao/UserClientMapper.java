@@ -54,7 +54,7 @@ public interface UserClientMapper {
      * 查询用户的设备列表
      * @return
      */
-    List<UserClient> selectUserClientList(@Param(value = "userClient") UserClient userClient);
+    List<UserClient> selectClientList(@Param(value = "userClient") UserClient userClient);
 
     /**
      * 根据设备名称查询设备
