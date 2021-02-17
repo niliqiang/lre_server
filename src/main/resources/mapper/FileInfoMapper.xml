@@ -63,12 +63,28 @@
     select file_id, user_id, file_name, lre_result, status, create_time
     from lre_server.file_info
   </select>
-  <select id="fileInfoList" resultMap="BaseResultMap">
+  <select id="selectFileList" resultMap="BaseResultMap">
     <!--
       added by niliqiang
     -->
-    select file_name, lre_result, status, create_time
+    select file_id, file_name, lre_result, status, create_time
     from lre_server.file_info
+    where user_id = #{fileInfo.userId,jdbcType=INTEGER}
+    <if test="fileInfo.fileName != null and fileInfo.fileName != ''">
+      and file_name like concat('%',#{fileInfo.fileName},'%')
+    </if>
+    <if test="fileInfo.lreResult != null">
+      and lre_result = #{fileInfo.lreResult,jdbcType=TINYINT}
+    </if>
+    <if test="fileInfo.status != null">
+      and status = #{fileInfo.status,jdbcType=TINYINT}
+    </if>
+    <if test="fileInfo.startTime != null and fileInfo.endTime != null and fileInfo.startTime != '' and fileInfo.endTime != ''">
+      <![CDATA[
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') >=  DATE_FORMAT(#{fileInfo.startTime}, '%Y-%m-%d %H:%i:%S')
+        and DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') <=  DATE_FORMAT(#{fileInfo.endTime}, '%Y-%m-%d %H:%i:%S')
+      ]]>
+    </if>
     order by create_time desc
   </select>
 </mapper>

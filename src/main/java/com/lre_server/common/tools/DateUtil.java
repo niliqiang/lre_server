@@ -48,8 +48,17 @@ public class DateUtil {
 	 * @param date
 	 * @return
 	 */
-	public static String formatNormalDateString(Date date){
+	public static String formatNormalDateTimeString(Date date){
 		String pattern = "yyyy-MM-dd HH:mm:ss";
+		return DateFormatUtils.format(date, pattern);
+	}
+	/**
+	 * 生成页面普通展示日期
+	 * @param date
+	 * @return
+	 */
+	public static String formatNormalDateString(Date date){
+		String pattern = "yyyy-MM-dd";
 		return DateFormatUtils.format(date, pattern);
 	}
 	

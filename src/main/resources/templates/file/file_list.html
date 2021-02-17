@@ -8,28 +8,72 @@
 </head>
 <body>
 <div class="table_div">
-    <input id="copy_in" style="display: none" />
+    <div class="layui-form-item">
+        <div class="layui-input-inline ">
+            <button type="button" class="layui-btn" id="upload">
+                <i class="layui-icon">&#xe67c;</i>上传文件识别
+            </button>
+        </div>
+    </div>
     <div id="searchParam">
         <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="fileName" class="layui-input" autocomplete="off" placeholder="请输入文件名">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="lreResult">
+                    <option value="">请选择语种识别结果</option>
+                    <option value="-1">识别中</option>
+                    <option value="0">识别失败</option>
+                    <option value="1">汉语</option>
+                    <option value="2">英语</option>
+                    <option value="3">俄语</option>
+                    <option value="4">西班牙语</option>
+                    <option value="5">阿拉伯语</option>
+                </select>
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="status">
+                    <option value="">请选择文件缓存状态</option>
+                    <option value="0">已清理</option>
+                    <option value="1">缓存中</option>
+                </select>
+            </div>
             <div class="layui-input-inline ">
-                <button type="button" class="layui-btn" id="upload">
-                    <i class="layui-icon">&#xe67c;</i>上传文件识别
-                </button>
+                <button class="layui-btn" onclick="search()" id="search">查询</button>
             </div>
         </div>
-
     </div>
-    <table class="layui-table" id="showTable" lay-filter="showTable" ></table>
+    <table class="layui-hide" id="fileTable" lay-filter="fileTable" ></table>
 </div>
 </body>
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js"></script>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="batchDeleted" >批量删除</button>
+    </div>
+</script>
+<script type="text/html" id="operate">
+    <a title="下载" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="download"><icon class="layui-icon">&#xe601;</icon></a>
+    <a title="删除" class="layui-btn layui-bg-red layui-btn-sm layui-btn-normal" lay-event="delete"><icon class="layui-icon">&#xe640;</icon></a>
+</script>
 <script>
-    layui.use('table', function(){
+    var tableIns;
+    var startTime = null;
+    var endTime = null;
+    var $ = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'upload'], function(){
         var table = layui.table;
-        table.render({
-            elem: '#showTable'
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        tableIns = table.render({
+            elem: '#fileTable'
             , url:'/file/queryList'
             , page: true    //开启分页，默认page=1，limit=10
             , initSort: {   //默认按照时间倒序排列
@@ -45,10 +89,11 @@
                     {field:'lreResult', width:'15%', title:'语种识别结果', sort: true,
                         templet: function (data) {
                             if (data.lreResult == 1) return "<span>汉语</span>";
-                            else if (data.lreResult == 2) return "<span>俄语</span>";
-                            else if (data.lreResult == 3) return "<span>意大利语</span>";
-                            else if (data.lreResult == 4) return "<span>爱尔兰语</span>";
-                            else if (data.lreResult == 5) return "<span>土耳其语</span>";
+                            else if (data.lreResult == 2) return "<span>英语</span>";
+                            else if (data.lreResult == 3) return "<span>俄语</span>";
+                            else if (data.lreResult == 4) return "<span>西班牙语</span>";
+                            else if (data.lreResult == 5) return "<span>阿拉伯语</span>";
+                            else if (data.lreResult == -1) return "<span>识别中</span>";
                             else return "<span>识别失败</span>";
                         }
                     },
@@ -58,16 +103,117 @@
                             else return "<span>已清理</span>";
                         }
                     },
-                    {fixed: 'right',title:'操作',width:'12.5%',
-                        templet: function(data){
-                            return "<a href='' title='下载' class='layui-btn layui-btn-sm layui-btn-normal'><icon class='layui-icon'>&#xe601;</icon></a>"+
-                                "<a href='' title='删除' class='layui-btn layui-bg-red layui-btn-sm layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></a>";
-                        }
-                    }
+                    {fixed: 'right',title:'操作',width:'12.5%', toolbar:'#operate'}
                 ]
             ]
+            , toolbar: '#toolbar'
         });
+
+        //执行实例
+        var uploadIns = upload.render({
+            elem: '#upload' //绑定元素
+            ,url: '/file/upload'    //上传接口
+            ,accept: 'audio'
+            ,done: function(res){
+                search();
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+
+        laydate.render({
+            elem: '#createTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    startTime = value.split("~")[0];
+                    endTime = value.split("~")[1];
+                } else {
+                    startTime = null;
+                    endTime = null;
+                }
+            }
+        });
+
+        table.on('toolbar(fileTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的文件");
+                    } else {
+                        var fileIds = [];
+                        $(data).each(function (index, item) {
+                            fileIds.push(item.fileId);
+                        });
+                        tipDialog(fileIds, "选中的");
+                    }
+                    break;
+            };
+        });
+
+        table.on('tool(fileTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'delete':
+                    var fileId = [];
+                    fileId.push(data.fileId);
+                    tipDialog(fileId, data.fileName);
+                    break;
+                case 'download':
+                    $.ajax({
+                        url: "/file/download/"+data.fileName,
+                        cache: false,
+                        async: true,
+                        data: null,
+                        type: "GET",
+                        contentType: 'application/json; charset=UTF-8',
+                        dataType: "json",
+                        success: function (res) {
+                            layer.msg(res.msg);
+                        },
+                        error:function () {
+                            window.location.href="/file/download/"+data.fileName;
+                        }
+                    });
+                    break;
+            }
+        });
+
+        var tipDialog = function (fileIds, fileName) {
+            layer.open({
+                content: "确定要删除 " + fileName + " 文件吗?",
+                yes: function (index, layero) {
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendDelete("/file/delete", fileIds, function (res) {
+                        layer.msg(res.msg);
+                        search();
+                    });
+                }
+            });
+        };
     });
+
+    //执行查询
+    function search() {
+        //这里以搜索为例
+        tableIns.reload({
+            where: { //设定异步数据接口的额外参数
+                fileName: $("#fileName").val(),
+                startTime: startTime,
+                endTime: endTime,
+                lreResult: $("#lreResult").val(),
+                status: $("#status").val()
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    };
 </script>
 
 </html>

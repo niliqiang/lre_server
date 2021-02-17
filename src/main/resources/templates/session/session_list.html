@@ -8,42 +8,35 @@
     <link rel="stylesheet" href="/css/jquery.json-viewer.css" />
 </head>
 <body>
-<div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
-            <div class="user_table_div">
-                <div id="searchParam">
-                    <div class="layui-form-item">
-                        <div class="layui-input-inline">
-                            <input type="text" id="sessionId" class="layui-input" autocomplete="off" placeholder="请输入会话 ID">
-                        </div>
-                        <div class="layui-input-inline">
-                            <input type="text" id="clientId" class="layui-input" autocomplete="off" placeholder="请输入设备 ID">
-                        </div>
-                        <div class="layui-input-inline">
-                            <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择会话时间">
-                        </div>
-                        <div class="layui-input-inline layui-form">
-                            <select id="lreResult">
-                                <option value="">请选择语种识别结果</option>
-                                <option value="0">识别失败</option>
-                                <option value="1">汉语</option>
-                                <option value="2">英语</option>
-                                <option value="3">俄语</option>
-                                <option value="4">西班牙语</option>
-                                <option value="5">阿拉伯语</option>
-                            </select>
-                        </div>
-                        <div class="layui-input-inline ">
-                            <button class="layui-btn" onclick="search()" id="search">查询</button>
-                        </div>
-                    </div>
-
-                </div>
-                <table class="layui-hide" id="sessionTable" lay-filter="sessionTable"></table>
+<div class="session_table_div">
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="sessionId" class="layui-input" autocomplete="off" placeholder="请输入会话 ID">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" id="clientId" class="layui-input" autocomplete="off" placeholder="请输入设备 ID">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择会话时间">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="lreResult">
+                    <option value="">请选择语种识别结果</option>
+                    <option value="0">识别失败</option>
+                    <option value="1">汉语</option>
+                    <option value="2">英语</option>
+                    <option value="3">俄语</option>
+                    <option value="4">西班牙语</option>
+                    <option value="5">阿拉伯语</option>
+                </select>
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" onclick="search()" id="search">查询</button>
             </div>
         </div>
     </div>
+    <table class="layui-hide" id="sessionTable" lay-filter="sessionTable"></table>
 </div>
 </body>
 
@@ -65,9 +58,9 @@
     var startTime = null;
     var endTime = null;
     var $ = layui.jquery;
-    layui.use('table', function(){
-        var layer = layui.layer;
+    layui.use(['table', 'layer', 'laydate'], function(){
         var table = layui.table;
+        var layer = layui.layer;
         var laydate = layui.laydate;
         tableIns = table.render({
             elem: '#sessionTable'

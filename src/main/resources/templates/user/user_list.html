@@ -7,35 +7,29 @@
     <link rel="stylesheet" href="/css/custom.form.css">
 </head>
 <body>
-<div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
-            <div class="user_table_div">
-                <div id="searchParam">
-                    <div class="layui-form-item">
-                        <div class="layui-input-inline">
-                            <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输入用户名">
-                        </div>
-                        <div class="layui-input-inline">
-                            <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
-                        </div>
-                        <div class="layui-input-inline layui-form">
-                            <select id="status">
-                                <option value="">请选择账号状态</option>
-                                <option value="1">正常</option>
-                                <option value="2">禁用</option>
-                            </select>
-                        </div>
-                        <div class="layui-input-inline ">
-                            <button class="layui-btn" onclick="search()" id="search">查询</button>
-                        </div>
-                    </div>
-
-                </div>
-                <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
+<div class="user_table_div">
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输入用户名">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
+            </div>
+            <div class="layui-input-inline layui-form">
+                <select id="status">
+                    <option value="">请选择账号状态</option>
+                    <option value="1">正常</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" onclick="search()" id="search">查询</button>
             </div>
         </div>
+
     </div>
+    <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
 </div>
 </body>
 
