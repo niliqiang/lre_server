@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -31,13 +32,15 @@ public class ClientServiceImpl implements ClientService {
     private UserService userService;
 
     @Override
-    public PageInfo<UserClient> queryClientList(UserClient userClient) {
+    public PageInfo<UserClient> queryClientList(UserClient userClient, HttpServletRequest request) {
         PageHelper.startPage(userClient.getPage(), userClient.getLimit());
-        // 获取当前登录的用户信息
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String currentUserName = authentication.getName();
-            userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
+        if (request.isUserInRole("ROLE_USER")) {
+            // 获取当前登录的用户信息
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                String currentUserName = authentication.getName();
+                userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
+            }
         }
         List<UserClient> userClientList = userClientMapper.selectClientList(userClient);
         PageInfo<UserClient> pageClientInfo = new PageInfo<>(userClientList);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,8 @@ public class FileController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryList(FileInfo fileInfo) {
-        PageInfo pageObj = fileService.queryFileList(fileInfo);
+    public String queryList(FileInfo fileInfo, HttpServletRequest request) {
+        PageInfo pageObj = fileService.queryFileList(fileInfo, request);
         List<Map<String, Object>> fileList=pageObj.getList();
         JSONObject jo=new JSONObject();
         jo.put("code", 0);

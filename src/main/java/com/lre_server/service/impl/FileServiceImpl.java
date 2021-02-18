@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @ClassName: FileServiceImpl
@@ -49,13 +49,15 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public PageInfo<FileInfo> queryFileList(FileInfo fileInfo) {
+    public PageInfo<FileInfo> queryFileList(FileInfo fileInfo, HttpServletRequest request) {
         PageHelper.startPage(fileInfo.getPage(), fileInfo.getLimit());
-        // 获取当前登录的用户信息
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String currentUserName = authentication.getName();
-            fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
+        if (request.isUserInRole("ROLE_USER")) {
+            // 获取当前登录的用户信息
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                String currentUserName = authentication.getName();
+                fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
+            }
         }
         List<FileInfo> fileInfoList = fileInfoMapper.selectFileList(fileInfo);
         PageInfo<FileInfo> pageFileInfo = new PageInfo<>(fileInfoList);

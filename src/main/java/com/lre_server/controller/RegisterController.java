@@ -1,7 +1,9 @@
 package com.lre_server.controller;
 
 import com.lre_server.dao.SysUserMapper;
+import com.lre_server.dao.SysUserRoleMapper;
 import com.lre_server.entity.SysUser;
+import com.lre_server.entity.SysUserRole;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,9 @@ import java.util.Date;
 public class RegisterController {
     @Resource
     private SysUserMapper sysUserMapper;
+
+    @Resource
+    private SysUserRoleMapper sysUserRoleMapper;
 
     //数字
     public static final String REG_NUMBER = ".*\\d+.*";
@@ -110,12 +115,19 @@ public class RegisterController {
         try {
             // 密码加密存储
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            String password = bCryptPasswordEncoder.encode(sysUser.getPassword());
+            String password = bCryptPasswordEncoder.encode(passwordArray[0]);
             sysUser.setPassword(password);
             sysUser.setStatus((byte)0);
-            sysUser.setCreateTime(new Date());
+            Date registerTime = new Date();
+            sysUser.setCreateTime(registerTime);
+            sysUser.setUpdateTime(registerTime);
             // 写入数据库
             sysUserMapper.insert(sysUser);
+            Integer userId = sysUserMapper.selectByUserName(sysUser.getUserName()).getUserId();
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(userId);
+            sysUserRole.setRoleId(2);   // 默认为普通用户
+            sysUserRoleMapper.insert(sysUserRole);
             //  重定向到 login 页面
             return "redirect:/login";
         } catch (Exception e) {

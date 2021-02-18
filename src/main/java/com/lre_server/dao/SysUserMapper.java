@@ -2,6 +2,7 @@ package com.lre_server.dao;
 
 import com.lre_server.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -60,5 +61,5 @@ public interface SysUserMapper {
      * 查询用户列表
      * @return
      */
-    List<SysUser> sysUserList();
+    List<SysUser> selectUserList(@Param(value = "sysUser") SysUser sysUser);
 }

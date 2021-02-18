@@ -51,5 +51,5 @@ public interface SessionInfoMapper {
     int updateByPrimaryKey(SessionInfo record);
 
 
-    List<SessionInfo> selectSessionList(@Param(value = "sessionInfo") SessionInfo sessionInfo, @Param(value = "userId") int userId);
+    List<SessionInfo> selectSessionList(@Param(value = "sessionInfo") SessionInfo sessionInfo, @Param(value = "userId") Integer userId);
 }

@@ -5,6 +5,7 @@ import com.lre_server.common.tools.JsonResult;
 import com.lre_server.entity.FileInfo;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface FileService {
      * @param fileInfo
      * @return
      */
-    PageInfo<FileInfo> queryFileList(FileInfo fileInfo);
+    PageInfo<FileInfo> queryFileList(FileInfo fileInfo, HttpServletRequest request);
 
     JsonResult browserAddFile(MultipartFile file);
 

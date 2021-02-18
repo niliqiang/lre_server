@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
 <head>
     <meta charset="UTF-8">
     <title>设备列表</title>
@@ -97,12 +97,12 @@
 <script src="/js/jquery.json-viewer.js"></script>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="batchDeleted" >批量删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="batchDelete" >批量删除</button>
     </div>
 </script>
 <script type="text/html" id="operate">
     <a title="详情" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail"><icon class="layui-icon">&#xe60b;</icon></a>
-    <a title="编辑" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit"><icon class="layui-icon">&#xe642;</icon></a>
+    <a title="编辑" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" sec:authorize="hasRole('ROLE_USER')"><icon class="layui-icon">&#xe642;</icon></a>
     <a title="删除" class="layui-btn layui-bg-red layui-btn-xs layui-btn-normal" lay-event="delete"><icon class="layui-icon">&#xe640;</icon></a>
 </script>
 <script>
@@ -176,7 +176,7 @@
 
         table.on('toolbar(clientTable)', function (obj) {
             switch (obj.event) {
-                case 'batchDeleted':
+                case 'batchDelete':
                     var checkStatus = table.checkStatus(obj.config.id);
                     var data = checkStatus.data;
                     if (data.length == 0) {
@@ -234,6 +234,7 @@
                                 "操作系统": data.clientOs==1?"Linux":data.clientOs==2?"Android":"其他",
                                 "设备简介": data.clientInfo,
                                 "创建时间": layui.util.toDateString(data.createTime, "yyyy-MM-dd HH:mm:ss"),
+                                "更新时间": layui.util.toDateString(data.updateTime, "yyyy-MM-dd HH:mm:ss"),
                                 "认证状态": data.status==0?"未认证":data.clientOs==1?"认证通过":"认证失败"
                             };
                             $("#json-renderer").jsonViewer(jsonObj);

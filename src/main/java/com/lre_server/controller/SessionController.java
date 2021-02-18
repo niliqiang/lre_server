@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class SessionController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryList(SessionInfo sessionInfo) {
-        PageInfo pageObj = sessionService.querySessionList(sessionInfo);
+    public String queryList(SessionInfo sessionInfo, HttpServletRequest request) {
+        PageInfo pageObj = sessionService.querySessionList(sessionInfo, request);
         List<Map<String, Object>> sessionList=pageObj.getList();
         JSONObject jo=new JSONObject();
         jo.put("code", 0);

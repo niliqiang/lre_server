@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.lre_server.common.tools.JsonResult;
 import com.lre_server.entity.SessionInfo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface SessionService {
      * @param sessionInfo
      * @return
      */
-    PageInfo<SessionInfo> querySessionList(SessionInfo sessionInfo);
+    PageInfo<SessionInfo> querySessionList(SessionInfo sessionInfo, HttpServletRequest request);
 
     /**
      * 删除会话

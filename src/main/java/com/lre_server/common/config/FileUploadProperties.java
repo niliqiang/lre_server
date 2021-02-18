@@ -16,7 +16,4 @@ public class FileUploadProperties {
     @Value("${file.upload.path}")
     private String path;
 
-    @Value("${file.download.url}")
-    private String url;
-
 }

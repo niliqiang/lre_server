@@ -24,9 +24,9 @@ public class UserServiceImpl implements UserService {
     private SysUserMapper sysUserMapper;
 
     @Override
-    public PageInfo<SysUser> queryUserList(int page, int size) {
-        PageHelper.startPage(page, size);
-        List<SysUser> sysUserList = sysUserMapper.sysUserList();
+    public PageInfo<SysUser> queryUserList(SysUser sysUser) {
+        PageHelper.startPage(sysUser.getPage(), sysUser.getLimit());
+        List<SysUser> sysUserList = sysUserMapper.selectUserList(sysUser);
         PageInfo<SysUser> pageUserInfo = new PageInfo<>(sysUserList);
         return pageUserInfo;
     }
@@ -47,4 +47,11 @@ public class UserServiceImpl implements UserService {
         return JsonResult.success("用户基本资料更新成功");
     }
 
+    @Override
+    public JsonResult deleteUser(List<Integer> sysUserIds) {
+        for (Integer sysUserId : sysUserIds) {
+            sysUserMapper.deleteByPrimaryKey(sysUserId);
+        }
+        return JsonResult.success("用户删除成功");
+    }
 }

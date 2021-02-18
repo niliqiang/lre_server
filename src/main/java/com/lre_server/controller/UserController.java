@@ -26,8 +26,8 @@ public class UserController {
 
     @RequestMapping(value = "/queryList")
     @ResponseBody
-    public String queryUserList(@RequestParam("page") Integer pageNum, @RequestParam("limit") Integer pageSize) {
-        PageInfo pageObj = userService.queryUserList(pageNum, pageSize);
+    public String queryUserList(SysUser sysUser) {
+        PageInfo pageObj = userService.queryUserList(sysUser);
         List<Map<String, Object>> userList=pageObj.getList();
         JSONObject jo=new JSONObject();
         jo.put("code", 0);
@@ -46,6 +46,12 @@ public class UserController {
     @ResponseBody
     public JsonResult updateUserInfo(@RequestBody SysUser sysUser) {
         return userService.updateByUserName(sysUser);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @ResponseBody
+    public JsonResult deleteUser(@RequestBody List<Integer> sysUserIds) {
+        return userService.deleteUser(sysUserIds);
     }
 
 }

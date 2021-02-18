@@ -45,6 +45,11 @@ public class IndexController {
         return "user/user_info";
     }
 
+    @GetMapping("/role")
+    public String roleList() {
+        return "role/role_list";
+    }
+
     @GetMapping("/user")
     public String userList() {
         return "user/user_list";

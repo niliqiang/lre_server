@@ -5,40 +5,68 @@
     <title>用户管理</title>
     <link rel="stylesheet" href="/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/css/custom.form.css">
+    <style>
+        .custom-tree-item-clicked{color:#FC9003}
+    </style>
 </head>
 <body>
-<div class="user_table_div">
-    <div id="searchParam">
-        <div class="layui-form-item">
-            <div class="layui-input-inline">
-                <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输入用户名">
-            </div>
-            <div class="layui-input-inline">
-                <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
-            </div>
-            <div class="layui-input-inline layui-form">
-                <select id="status">
-                    <option value="">请选择账号状态</option>
-                    <option value="1">正常</option>
-                    <option value="2">禁用</option>
-                </select>
-            </div>
-            <div class="layui-input-inline ">
-                <button class="layui-btn" onclick="search()" id="search">查询</button>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md2 layui-col-lg2">
+            <div class="layui-card">
+                <div class="layui-card-body mini-bar" id="leftTree">
+                </div>
             </div>
         </div>
-
+        <div class="layui-col-sm12 layui-col-md10 layui-col-lg10">
+            <div class="user_table_div">
+                <div id="searchParam">
+                    <div class="layui-form-item">
+                        <div class="layui-input-inline">
+                            <input type="text" id="userName" class="layui-input" autocomplete="off" placeholder="请输入用户名">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
+                        </div>
+                        <div class="layui-input-inline layui-form">
+                            <select id="status">
+                                <option value="">请选择账号状态</option>
+                                <option value="0">禁用</option>
+                                <option value="1">正常</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline ">
+                            <button class="layui-btn" onclick="search()" id="search">查询</button>
+                        </div>
+                    </div>
+                </div>
+                <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
+            </div>
+        </div>
     </div>
-    <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
 </div>
 </body>
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js"></script>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+    </div>
+</script>
+<script type="text/html" id="operate">
+    <a title="删除" class="layui-btn layui-bg-red layui-btn-xs layui-btn-normal" lay-event="delete"><icon class="layui-icon">&#xe640;</icon></a>
+</script>
 <script>
-    layui.use('table', function(){
+    var tableIns;
+    var startTime = null;
+    var endTime = null;
+    var userRoleMark = null;
+    var $ = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'tree'], function(){
         var table = layui.table;
-        table.render({
+        var laydate = layui.laydate;
+        var tree = layui.tree;
+        tableIns = table.render({
             elem: '#userTable'
             , url:'/user/queryList'
             , page: true    //开启分页，默认page=1，limit=10
@@ -48,36 +76,114 @@
             }
             , cols: [
                 [
-                    {type: 'checkbox', fixed: 'left', width:'4%'},
-                    {field:'userName', width:'10%', title:'用户名', sort: true},
-                    {field:'mobile', width:'10%', title:'手机号', sort: true},
-                    {field:'email', width:'14%', title:'邮箱', sort: true},
-                    {field:'sex', width:'7%', title:'性别', sort: true,
+                    // {type: 'checkbox', fixed: 'left', width:'4%'},
+                    {field:'userName', minWidth:110, title:'用户名', sort: true},
+                    {field:'mobile', minWidth:120, title:'手机号', sort: true},
+                    {field:'email', minWidth:140, title:'邮箱', sort: true},
+                    {field:'sex', minWidth:75, title:'性别', sort: true,
                         templet: function (data) {
                             if (data.sex == 1) return "<span>男</span>";
                             else return "<span>女</span>";
                         }
                     },
-                    {field:'age', width:'7%', title:'年龄', sort: true},
-                    {field:'createTime', width:'15%', title:'创建时间', sort: true,
+                    {field:'age', minWidth:75, title:'年龄', sort: true},
+                    {field:'createTime', minWidth:165, title:'创建时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'updateTime', width:'15%', title:'更新时间', sort: true,
+                    {field:'updateTime', minWidth:165, title:'更新时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'status', width:'10%', title:'用户状态', sort: true,
+                    {field:'status', minWidth:110, title:'用户状态', sort: true,
                         templet: function (data) {
                             if (data.status == 1)
                                 return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
                             else return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
                         }
                     },
-                    {fixed: 'right',title:'操作',width:'8%',
-                        templet: function(data){
-                            return "<a href='' title='删除' class='layui-btn layui-bg-red layui-btn-sm layui-btn-normal'><icon class='layui-icon'>&#xe640;</icon></a>";
-                        }
-                    }
+                    {fixed: 'right', toolbar: "#operate", title:'操作',minWidth:85}
                 ]
             ]
+            , toolbar: '#toolbar'
+        });
+
+        laydate.render({
+            elem: '#createTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    startTime = value.split("~")[0];
+                    endTime = value.split("~")[1];
+                } else {
+                    startTime = null;
+                    endTime = null;
+                }
+            }
+        });
+
+        table.on('tool(userTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'delete':
+                    var userIds = [];
+                    userIds.push(data.userId);
+                    tipDialog(userIds, data.userName);
+                    break;
+            }
+        });
+
+        var tipDialog = function (userIds, userName) {
+            layer.open({
+                content: "确定要删除 " + userName + " 用户吗?",
+                yes: function (index, layero) {
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendDelete("/user/delete", userIds, function (res) {
+                        layer.msg(res.msg);
+                        search();
+                    });
+                }
+            });
+        };
+
+        // 渲染左树
+        var treeIns = tree.render({
+            elem: '#leftTree'   //绑定元素
+            ,data: [{
+                title: '系统角色'   //一级菜单
+                ,field: 'ROLE'
+                ,spread: true
+                ,children: [{
+                    title: '管理员'    //二级菜单
+                    ,field: 'ADMIN'
+                },{
+                    title: '普通用户'   //二级菜单
+                    ,field: 'USER'
+                }]
+            }]
+            , onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+            ,click: function (obj) {
+                console.log(obj);
+                userRoleMark = obj.data.field;
+                $("#leftTree span").removeClass('custom-tree-item-clicked');     //清除旧的样式
+                $("#leftTree span:contains(" + obj.data.title + ")").addClass('custom-tree-item-clicked');
+                search();
+            }
         });
     });
+
+    // 执行查询
+    function search() {
+        // 这里以搜索为例
+        tableIns.reload({
+            where: { //设定异步数据接口的额外参数
+                userName: $("#userName").val(),
+                startTime: startTime,
+                endTime: endTime,
+                status: $("#status").val(),
+                userRoleMark: userRoleMark
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    };
 </script>
 </html>

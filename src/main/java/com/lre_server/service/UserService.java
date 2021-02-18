@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.lre_server.common.tools.JsonResult;
 import com.lre_server.entity.SysUser;
 
+import java.util.List;
+
 /**
  * @InterfaceName: UserService
  * @Author: niliqiang
@@ -11,7 +13,31 @@ import com.lre_server.entity.SysUser;
  * @Description: TODO
  */
 public interface UserService {
-    PageInfo<SysUser> queryUserList(int page, int size);
+    /**
+     * 查询用户列表
+     * @param sysUser
+     * @return
+     */
+    PageInfo<SysUser> queryUserList(SysUser sysUser);
+
+    /**
+     * 更具用户名查询用户
+     * @param userName
+     * @return
+     */
     SysUser queryByUserName(String userName);
+
+    /**
+     * 更新用户信息
+     * @param sysUser
+     * @return
+     */
     JsonResult updateByUserName(SysUser sysUser);
+
+    /**
+     * 删除用户
+     * @param sysUserIds
+     * @return
+     */
+    JsonResult deleteUser(List<Integer> sysUserIds);
 }

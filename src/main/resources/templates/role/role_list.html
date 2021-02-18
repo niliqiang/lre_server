@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/custom.form.css">
+</head>
+<body>
+<div class="role_table_div">
+    <div id="searchParam">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="roleName" class="layui-input" autocomplete="off" placeholder="请输入角色名">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" readonly class="layui-input" id="createTime" placeholder="请选择创建时间">
+            </div>
+            <div class="layui-input-inline ">
+                <button class="layui-btn" onclick="search()" id="search">查询</button>
+            </div>
+        </div>
+
+    </div>
+    <table class="layui-hide" id="roleTable" lay-filter="roleTable"></table>
+</div>
+</body>
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+    </div>
+</script>
+<script>
+    var tableIns;
+    var startTime = null;
+    var endTime = null;
+    var $ = layui.jquery;
+    layui.use(['table', 'laydate'], function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        tableIns = table.render({
+            elem: '#roleTable'
+            , url:'/role/queryList'
+            , page: true    //开启分页，默认page=1，limit=10
+            , initSort: {   //默认按照时间正序排列
+                field: 'createTime',
+                type: 'asc'
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left', width:'5%'},
+                    {field:'roleName', width:'10%', title:'角色名', sort: true},
+                    {field:'createTime', width:'15%', title:'创建时间', sort: true,
+                        templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
+                    {field:'updateTime', width:'15%', title:'更新时间', sort: true,
+                        templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
+                    {field:'roleInfo', width:'55%', title:'角色简介', sort: true},
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+        laydate.render({
+            elem: '#createTime'
+            , type: 'datetime'
+            , range: '~'
+            , done: function (value, date, endDate) {
+                if (value != null && value != undefined && value != "") {
+                    startTime = value.split("~")[0];
+                    endTime = value.split("~")[1];
+                } else {
+                    startTime = null;
+                    endTime = null;
+                }
+            }
+        });
+    });
+
+    //执行查询
+    function search() {
+        //这里以搜索为例
+        tableIns.reload({
+            where: { //设定异步数据接口的额外参数
+                roleName: $("#roleName").val(),
+                startTime: startTime,
+                endTime: endTime,
+            }
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    };
+</script>
+</html>
