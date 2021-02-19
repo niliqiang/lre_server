@@ -54,4 +54,10 @@ public class UserController {
         return userService.deleteUser(sysUserIds);
     }
 
+    @RequestMapping(value = "/status/update", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult updateUserStatus(@RequestBody SysUser sysUser) {
+        return userService.updateUserStatus(sysUser);
+    }
+
 }

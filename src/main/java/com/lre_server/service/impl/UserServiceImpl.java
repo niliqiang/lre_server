@@ -66,4 +66,11 @@ public class UserServiceImpl implements UserService {
         }
         return JsonResult.success("用户删除成功");
     }
+
+    @Override
+    public JsonResult updateUserStatus(SysUser sysUser) {
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateUserStatusByPrimaryKey(sysUser);
+        return JsonResult.success("用户状态更新成功");
+    }
 }

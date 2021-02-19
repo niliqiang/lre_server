@@ -47,7 +47,7 @@
             <label class="layui-form-label">用户状态</label>
             <div class="layui-input-block">
                 <input th:if="${flagType} eq 'edit'" type="checkbox" name="status" lay-skin="switch" lay-text="正常|禁用"
-                       lay-filter="switch" checked="checked" disabled="disabled">
+                       lay-filter="switch" disabled>
             </div>
         </div>
         <div class="layui-form-item">
@@ -72,17 +72,12 @@
                 $(".layui-container input[name=mobile]").val(res.data.mobile);
                 $(".layui-container input[name=email]").val(res.data.email);
                 $(".layui-container input[name=age]").val(res.data.age);
-                $(".layui-container input[name=sex][value=1]").attr("checked", res.data.sex == 1 ? true : false);
-                $(".layui-container input[name=sex][value=0]").attr("checked", res.data.sex == 0 ? true : false);
+                $(".layui-container input[name=sex][value=1]").prop("checked", res.data.sex == 1 ? true : false);
+                $(".layui-container input[name=sex][value=0]").prop("checked", res.data.sex == 0 ? true : false);
                 if (res.data.status == 1) {
-                    $(".layui-container input[name=status]").attr('checked', 'checked');
-                    $(".layui-container input[name=status]").attr('type', 'hidden').val(1);
+                    $(".layui-container input[name=status]").prop('checked', true);
                 } else {
-                    $(".layui-container input[name=status]").attr('type', 'hidden').removeAttr("checked").val(0);
-                    var x = document.getElementsByClassName("layui-unselect layui-form-switch layui-form-onswitch");
-                    x[0].setAttribute("class", "layui-unselect layui-form-switch");
-                    var d = document.getElementsByTagName('em')[0];
-                    d.firstChild.nodeValue = '禁用';
+                    $(".layui-container input[name=status]").prop('checked', false);
                 }
                 form.render(); //更新全部
             }

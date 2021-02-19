@@ -62,4 +62,11 @@ public interface UserClientMapper {
      * @return
      */
     UserClient selectByClientName(String clientName);
+
+    /**
+     * 更新设备状态
+     * @param record
+     * @return
+     */
+    int updateClientStatusByPrimaryKey(UserClient record);
 }

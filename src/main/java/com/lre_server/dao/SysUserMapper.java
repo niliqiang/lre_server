@@ -62,4 +62,6 @@ public interface SysUserMapper {
      * @return
      */
     List<SysUser> selectUserList(@Param(value = "sysUser") SysUser sysUser);
+
+    int updateUserStatusByPrimaryKey(SysUser record);
 }

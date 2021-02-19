@@ -48,7 +48,9 @@ public class ClientServiceImpl implements ClientService {
         if (currentUserName != null) {
             userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
             userClient.setStatus((byte)0);
-            userClient.setCreateTime(new Date());
+            Date addClientTime = new Date();
+            userClient.setCreateTime(addClientTime);
+            userClient.setUpdateTime(addClientTime);
             userClientMapper.insert(userClient);
             return JsonResult.success("设备信息提交成功");
         }
@@ -65,7 +67,15 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public JsonResult updateClient(UserClient userClient) {
+        userClient.setUpdateTime(new Date());
         userClientMapper.updateByPrimaryKey(userClient);
         return JsonResult.success("设备信息提交成功");
+    }
+
+    @Override
+    public JsonResult updateClientStatus(UserClient userClient) {
+        userClient.setUpdateTime(new Date());
+        userClientMapper.updateClientStatusByPrimaryKey(userClient);
+        return JsonResult.success("设备状态更新成功");
     }
 }

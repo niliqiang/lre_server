@@ -113,4 +113,13 @@
     </if>
     order by create_time
   </select>
+  <update id="updateUserStatusByPrimaryKey" parameterType="com.lre_server.entity.SysUser">
+    <!--
+      added by niliqiang
+    -->
+    update sys_user
+    set status = #{status,jdbcType=TINYINT},
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
 </mapper>

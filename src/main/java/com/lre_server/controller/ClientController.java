@@ -54,4 +54,10 @@ public class ClientController {
     public JsonResult updateClient(@RequestBody UserClient userClient) {
         return clientService.updateClient(userClient);
     }
+
+    @RequestMapping(value = "/status/update", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult updateClientStatus(@RequestBody UserClient userClient) {
+        return clientService.updateClientStatus(userClient);
+    }
 }

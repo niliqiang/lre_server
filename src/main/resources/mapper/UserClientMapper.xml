@@ -110,4 +110,13 @@
     from user_client
     where client_name = #{clientName,jdbcType=VARCHAR}
   </select>
+  <update id="updateClientStatusByPrimaryKey" parameterType="com.lre_server.entity.UserClient">
+    <!--
+      added by niliqiang
+    -->
+    update user_client
+    set status = #{status,jdbcType=TINYINT},
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where client_id = #{clientId,jdbcType=VARCHAR}
+  </update>
 </mapper>

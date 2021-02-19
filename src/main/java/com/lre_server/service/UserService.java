@@ -45,4 +45,11 @@ public interface UserService {
      * @return
      */
     JsonResult deleteUser(List<Integer> sysUserIds);
+
+    /**
+     * 更新用户状态
+     * @param sysUser
+     * @return
+     */
+    JsonResult updateUserStatus(SysUser sysUser);
 }

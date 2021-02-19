@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
 <head>
     <meta charset="UTF-8">
     <title>用户管理</title>
@@ -32,6 +32,7 @@
                             <select id="status">
                                 <option value="">请选择账号状态</option>
                                 <option value="0">禁用</option>
+                                <!--<option value="-1">审核中</option>-->
                                 <option value="1">正常</option>
                             </select>
                         </div>
@@ -49,6 +50,9 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js"></script>
+<script type="text/html" id="statusSwitch">
+    <input type="checkbox" value="{{d.userId}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="statusSwitch" sec:authorize="hasRole('ROLE_ADMIN')" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
     </div>
@@ -64,6 +68,7 @@
     var $ = layui.jquery;
     layui.use(['table', 'layer', 'laydate', 'tree'], function(){
         var table = layui.table;
+        var form = layui.form;
         var laydate = layui.laydate;
         var tree = layui.tree;
         tableIns = table.render({
@@ -92,13 +97,7 @@
                         templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
                     {field:'updateTime', minWidth:165, title:'更新时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'status', minWidth:110, title:'用户状态', sort: true,
-                        templet: function (data) {
-                            if (data.status == 1)
-                                return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" checked disabled>';
-                            else return '<input type="checkbox" lay-skin="switch" lay-text="正常|禁用" disabled>';
-                        }
-                    },
+                    {field:'status', minWidth:110, title:'用户状态', sort: true, templet: '#statusSwitch'},
                     {toolbar: "#operate", title:'操作',minWidth:85}
                 ]
             ]
@@ -167,6 +166,17 @@
                 $("#leftTree span:contains(" + obj.data.title + ")").addClass('custom-tree-item-clicked');
                 search();
             }
+        });
+
+        //监听状态操作
+        form.on('switch(statusSwitch)', function(obj){
+            var data = {
+                userId: obj.value,
+                status: obj.elem.checked ? 1 : 0
+            };
+            CoreUtil.sendPost("/user/status/update", data, function (res) {
+                layer.msg(res.msg);
+            });
         });
     });
 

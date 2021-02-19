@@ -40,4 +40,11 @@ public interface ClientService {
      * @return
      */
     JsonResult updateClient(UserClient userClient);
+
+    /**
+     * 更新虚拟设备状态
+     * @param userClient
+     * @return
+     */
+    JsonResult updateClientStatus(UserClient userClient);
 }

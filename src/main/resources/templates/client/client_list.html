@@ -79,7 +79,7 @@
                     <option value="">请选择设备认证状态</option>
                     <option value="0">未认证</option>
                     <option value="1">认证通过</option>
-                    <option value="2">认证失败</option>
+                    <!--<option value="-1">认证失败</option>-->
                 </select>
             </div>
             <div class="layui-input-inline ">
@@ -103,6 +103,10 @@
 <script src="/layui/layui.all.js"></script>
 <script src="/js/core.util.js"></script>
 <script src="/js/jquery.json-viewer.js"></script>
+<script type="text/html" id="statusSwitch">
+    <input type="checkbox" value="{{d.clientId}}" lay-skin="switch" lay-text="认证通过|未认证" lay-filter="statusSwitch" sec:authorize="hasRole('ROLE_ADMIN')" {{ d.status == 1 ? 'checked' : '' }}>
+    <input type="checkbox" lay-skin="switch" lay-text="认证通过|未认证" sec:authorize="hasRole('ROLE_USER')" {{ d.status == 1 ? 'checked' : '' }} disabled>
+</script>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="batchDelete" >批量删除</button>
@@ -152,15 +156,7 @@
                     },
                     {field:'createTime', width:'15%', title:'创建时间', sort: true,
                         templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"},
-                    {field:'status', width:'11%', title:'认证状态', sort: true,
-                        templet: function (data) {
-                            if (data.status == 1)
-                                return '<input type="checkbox" lay-skin="switch" lay-text="认证通过" checked disabled>';
-                            else if (data.status == -1)
-                                return '<input type="checkbox" lay-skin="switch" lay-text="认证通过|认证失败" disabled>';
-                            else return '<input type="checkbox" lay-skin="switch" lay-text="认证通过|未认证" disabled>';
-                        }
-                    },
+                    {field:'status', width:'11%', title:'认证状态', sort: true, templet: '#statusSwitch'},
                     {fixed: 'right', toolbar: "#operate", title:'操作',width:'14%'}
                 ]
             ]
@@ -243,7 +239,8 @@
                                 "设备简介": data.clientInfo,
                                 "创建时间": layui.util.toDateString(data.createTime, "yyyy-MM-dd HH:mm:ss"),
                                 "更新时间": layui.util.toDateString(data.updateTime, "yyyy-MM-dd HH:mm:ss"),
-                                "认证状态": data.status==0?"未认证":data.clientOs==1?"认证通过":"认证失败"
+                                // "认证状态": data.status==1?"认证通过":data.status==0?"未认证":"认证失败"
+                                "认证状态": data.status==1?"认证通过":"未认证"
                             };
                             $("#json-renderer").jsonViewer(jsonObj);
                         },
@@ -283,6 +280,19 @@
                 search();
             });
             return false;
+        });
+
+        //监听状态操作
+        form.on('switch(statusSwitch)', function(obj){
+            console.log(obj);
+            var data = {
+                clientId: obj.value,
+                status: obj.elem.checked ? 1 : 0
+            };
+            console.log(data);
+            CoreUtil.sendPost("/client/status/update", data, function (res) {
+                layer.msg(res.msg);
+            });
         });
     });
 
