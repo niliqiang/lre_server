@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>会话管理</title>
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/jquery.json-viewer.css" />
 </head>
 <body>
-<div class="session_table_div">
+<div class="session_table_div" th:if="${userStatus == 'enable'}">
     <div id="searchParam">
         <div class="layui-form-item">
             <div class="layui-input-inline">
@@ -37,6 +37,14 @@
         </div>
     </div>
     <table class="layui-hide" id="sessionTable" lay-filter="sessionTable"></table>
+</div>
+<div th:unless="${userStatus == 'enable'}">
+    <div th:switch="${userStatus}">
+        <p th:case="disable">请先完善基本资料，
+            <a th:href="@{/index/user/info}" style="color:#0366d6;text-decoration:underline;">去完善</a>
+        </p>
+        <p th:case="pending">资料审核中，请稍后...</p>
+    </div>
 </div>
 </body>
 

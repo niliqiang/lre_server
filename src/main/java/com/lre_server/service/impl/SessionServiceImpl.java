@@ -8,9 +8,6 @@ import com.lre_server.entity.SessionInfo;
 import com.lre_server.service.SessionService;
 import com.lre_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +31,8 @@ public class SessionServiceImpl implements SessionService {
         PageHelper.startPage(sessionInfo.getPage(), sessionInfo.getLimit());
         Integer userId = null;
         if (request.isUserInRole("ROLE_USER")) {
-            // 获取当前登录的用户信息
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-                String currentUserName = authentication.getName();
-                userId = userService.queryByUserName(currentUserName).getUserId();
-            }
+            String currentUserName = userService.getCurrentUserName();
+            userId = userService.queryByUserName(currentUserName).getUserId();
         }
         List<SessionInfo> sessionInfoList = sessionInfoMapper.selectSessionList(sessionInfo, userId);
         PageInfo<SessionInfo> pageSessionInfo = new PageInfo<>(sessionInfoList);

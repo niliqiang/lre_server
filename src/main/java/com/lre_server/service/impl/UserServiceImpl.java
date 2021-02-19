@@ -7,6 +7,9 @@ import com.lre_server.dao.SysUserMapper;
 import com.lre_server.entity.SysUser;
 import com.lre_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -22,6 +25,15 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Override
+    public String getCurrentUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return authentication.getName();
+        }
+        return null;
+    }
 
     @Override
     public PageInfo<SysUser> queryUserList(SysUser sysUser) {

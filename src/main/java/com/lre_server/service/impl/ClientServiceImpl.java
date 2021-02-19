@@ -9,9 +9,6 @@ import com.lre_server.entity.UserClient;
 import com.lre_server.service.ClientService;
 import com.lre_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +32,8 @@ public class ClientServiceImpl implements ClientService {
     public PageInfo<UserClient> queryClientList(UserClient userClient, HttpServletRequest request) {
         PageHelper.startPage(userClient.getPage(), userClient.getLimit());
         if (request.isUserInRole("ROLE_USER")) {
-            // 获取当前登录的用户信息
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-                String currentUserName = authentication.getName();
-                userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
-            }
+            String currentUserName = userService.getCurrentUserName();
+            userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
         }
         List<UserClient> userClientList = userClientMapper.selectClientList(userClient);
         PageInfo<UserClient> pageClientInfo = new PageInfo<>(userClientList);
@@ -51,9 +44,8 @@ public class ClientServiceImpl implements ClientService {
     public JsonResult addClient(UserClient userClient) {
         UserClient existUserClient = userClientMapper.selectByClientName(userClient.getClientName());
         if (existUserClient != null) return JsonResult.fail("设备名称已存在，请更换试试吧");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String currentUserName = authentication.getName();
+        String currentUserName = userService.getCurrentUserName();
+        if (currentUserName != null) {
             userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
             userClient.setStatus((byte)0);
             userClient.setCreateTime(new Date());

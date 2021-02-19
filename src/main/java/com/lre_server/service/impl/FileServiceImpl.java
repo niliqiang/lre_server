@@ -12,9 +12,6 @@ import com.lre_server.service.FileService;
 import com.lre_server.service.UserService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,12 +49,8 @@ public class FileServiceImpl implements FileService {
     public PageInfo<FileInfo> queryFileList(FileInfo fileInfo, HttpServletRequest request) {
         PageHelper.startPage(fileInfo.getPage(), fileInfo.getLimit());
         if (request.isUserInRole("ROLE_USER")) {
-            // 获取当前登录的用户信息
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-                String currentUserName = authentication.getName();
-                fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
-            }
+            String currentUserName = userService.getCurrentUserName();
+            fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
         }
         List<FileInfo> fileInfoList = fileInfoMapper.selectFileList(fileInfo);
         PageInfo<FileInfo> pageFileInfo = new PageInfo<>(fileInfoList);
@@ -87,11 +80,9 @@ public class FileServiceImpl implements FileService {
         } else {
             uploadDirectory.mkdir();
         }
-        // 获取当前登录的用户信息
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+        String currentUserName = userService.getCurrentUserName();
+        if (currentUserName != null) {
             try {
-                String currentUserName = authentication.getName();
                 String fileName = file.getOriginalFilename();
                 String newFileName = createTime + " " + currentUserName + " " + fileName;
                 String newFilePath = newPath + newFileName;

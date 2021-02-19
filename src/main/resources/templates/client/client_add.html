@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>设备创建</title>
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/custom.form.css">
 </head>
 <body>
-<div class="panel panel-default operation">
+<div class="panel panel-default operation" th:if="${userStatus == 'enable'}">
     <div class="panel-heading title">创建虚拟设备</div>
     <div class="layui-card-body">
         <form class="layui-form " action="" lay-filter="info" style="width: 700px;margin-top: 10px">
@@ -58,6 +58,14 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+<div th:unless="${userStatus == 'enable'}">
+    <div th:switch="${userStatus}">
+        <p th:case="disable">请先完善基本资料，
+            <a th:href="@{/index/user/info}" style="color:#0366d6;text-decoration:underline;">去完善</a>
+        </p>
+        <p th:case="pending">资料审核中，请稍后...</p>
     </div>
 </div>
 </body>

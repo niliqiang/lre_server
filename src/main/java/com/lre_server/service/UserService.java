@@ -14,6 +14,11 @@ import java.util.List;
  */
 public interface UserService {
     /**
+     * 获取当前登录用户的用户名
+     * @return
+     */
+    String getCurrentUserName();
+    /**
      * 查询用户列表
      * @param sysUser
      * @return

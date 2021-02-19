@@ -1,5 +1,7 @@
 package com.lre_server.controller;
 
+import com.lre_server.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,20 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/index")
 public class IndexController {
+    @Autowired
+    private UserService userService;
+
+    private void setUserStatusForHTML(Model model) {
+        Byte userStatus = userService.queryByUserName(userService.getCurrentUserName()).getStatus();
+        if (userStatus == 0) {
+            model.addAttribute("userStatus", "disable");
+        } else if (userStatus == -1){
+            model.addAttribute("userStatus", "pending");
+        } else {
+            model.addAttribute("userStatus", "enable");
+        }
+    }
+
     @GetMapping("/home")
     public String indexHome() {
         return "home";
@@ -56,24 +72,27 @@ public class IndexController {
     }
 
     @GetMapping("/file")
-    public String fileList() {
+    public String fileList(Model model) {
+        setUserStatusForHTML(model);
         return "file/file_list";
     }
 
     @GetMapping("/client/add")
     public String addClient(Model model) {
+        setUserStatusForHTML(model);
         model.addAttribute("clientUUID", UUID.randomUUID().toString().replace("-", ""));
         return "client/client_add";
     }
 
     @GetMapping("/client")
-    public String clientList() {
+    public String clientList(Model model) {
+        setUserStatusForHTML(model);
         return "client/client_list";
     }
 
     @GetMapping("/session")
-    public String sessionList() {
+    public String sessionList(Model model) {
+        setUserStatusForHTML(model);
         return "session/session_list";
     }
-
 }
