@@ -1,5 +1,10 @@
 package com.lre_server.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.lre_server.entity.FileInfo;
+import com.lre_server.entity.StatsInfoEntity;
+import com.lre_server.service.ClientService;
+import com.lre_server.service.FileService;
 import com.lre_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -8,8 +13,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -23,6 +34,10 @@ import java.util.UUID;
 public class IndexController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private ClientService clientService;
+    @Autowired
+    private FileService fileService;
 
     private void setUserStatusForHTML(Model model) {
         Byte userStatus = userService.queryByUserName(userService.getCurrentUserName()).getStatus();
@@ -36,8 +51,44 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public String indexHome() {
+    public String indexHome(Model model) {
+        model.addAttribute("userName", userService.getCurrentUserName());
         return "home";
+    }
+
+    @RequestMapping("/stats/info/{userName}")
+    @ResponseBody
+    public String getStatsInfo(@PathVariable("userName") String userName) {
+        // 用户统计
+        Integer userNumber = userService.getUserNumber();
+        // 设备统计
+        Integer currentUserId = userService.queryByUserName(userName).getUserId();
+        Integer sysClientNumber = clientService.getClientNumber(null);
+        Integer userClientNumber = clientService.getClientNumber(currentUserId);
+        // 语种识别统计
+        Integer sysFileNumber = fileService.getFileNumber(null);
+        Integer userFileNumber = fileService.getFileNumber(currentUserId);
+        HashMap<String, Object> statsInfoMap = new HashMap<>();
+        statsInfoMap.put("userNumber", userNumber);
+        statsInfoMap.put("sysClientNumber", sysClientNumber);
+        statsInfoMap.put("userClientNumber", userClientNumber);
+        statsInfoMap.put("sysFileNumber", sysFileNumber);
+        statsInfoMap.put("userFileNumber", userFileNumber);
+        JSONObject jo=new JSONObject();
+        jo.put("code", 0);
+        jo.put("data", statsInfoMap);
+        return jo.toString();
+    }
+
+    @RequestMapping("/stats/fileInfo")
+    @ResponseBody
+    public List<StatsInfoEntity> getFileStatsInfoList(HttpServletRequest request) {
+        // 管理员用户不区分userId
+        Integer currentUserId = null;
+        if (request.isUserInRole("ROLE_USER")) {
+            currentUserId = userService.queryByUserName(userService.getCurrentUserName()).getUserId();
+        }
+        return fileService.getFileStatsInfoList(currentUserId);
     }
 
     @GetMapping("/login")

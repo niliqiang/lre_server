@@ -52,4 +52,10 @@ public interface UserService {
      * @return
      */
     JsonResult updateUserStatus(SysUser sysUser);
+
+    /**
+     * 获取系统的用户数（包含管理员）
+     * @return
+     */
+    Integer getUserNumber();
 }

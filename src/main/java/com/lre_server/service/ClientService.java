@@ -47,4 +47,11 @@ public interface ClientService {
      * @return
      */
     JsonResult updateClientStatus(UserClient userClient);
+
+    /**
+     * 获取当前用户的设备数，userId为null时，获取所有用户的设备数
+     * @param userId
+     * @return
+     */
+    Integer getClientNumber(Integer userId);
 }

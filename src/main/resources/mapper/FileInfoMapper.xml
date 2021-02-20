@@ -13,6 +13,14 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
+  <resultMap id="StatsInfoResultMap" type="com.lre_server.entity.StatsInfoEntity">
+    <!--
+      added by niliqiang
+    -->
+    <result column="create_day" jdbcType="TIMESTAMP" property="createDay" />
+    <result column="day_count" jdbcType="INTEGER" property="dayCount" />
+  </resultMap>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
       WARNING - @mbg.generated
@@ -89,5 +97,17 @@
       ]]>
     </if>
     order by create_time desc
+  </select>
+  <select id="selectFileStatsInfoList" resultMap="StatsInfoResultMap">
+    <!--
+      added by niliqiang
+    -->
+    select DATE_FORMAT(create_time, '%Y-%m-%d') create_day, count(file_id) day_count
+    from file_info
+    where 1 = 1
+    <if test="userId != null">
+      and user_id = #{userId,jdbcType=INTEGER}
+    </if>
+    group by create_day
   </select>
 </mapper>

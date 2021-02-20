@@ -19,35 +19,34 @@
 </style>
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main layui-top-box">
+    <div class="layuimini-main layui-top-box" sec:authorize="hasRole('ROLE_ADMIN')">
         <div class="layui-row layui-col-space10">
-            <div class="layui-col-md4" sec:authorize="hasRole('ROLE_ADMIN')">
+            <div class="layui-col-md4">
                 <div class="col-xs-12 col-md-4">
                     <div class="panel layui-bg-cyan">
                         <div class="panel-body">
                             <div class="panel-title">
-                                <span class="label pull-right layui-bg-green">实时</span>
+                                <span class="label pull-right layui-bg-green">非实时</span>
                                 <h3>用户统计</h3>
                             </div>
                             <div class="panel-content">
-                                <h1 class="no-margins">2</h1>
+                                <h1 class="no-margins" id="userNumber">0</h1>
                                 <small>系统总记录数</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="layui-col-md4">
                 <div class="col-xs-12 col-md-4">
                     <div class="panel layui-bg-green">
                         <div class="panel-body">
                             <div class="panel-title">
-                                <span class="label pull-right layui-bg-orange">实时</span>
+                                <span class="label pull-right layui-bg-orange">非实时</span>
                                 <h3>设备统计</h3>
                             </div>
                             <div class="panel-content">
-                                <h1 class="no-margins">2</h1>
+                                <h1 class="no-margins" id="sysClientNumber">0</h1>
                                 <small>系统总记录数</small>
                             </div>
                         </div>
@@ -63,8 +62,44 @@
                                 <h3>语种识别统计</h3>
                             </div>
                             <div class="panel-content">
-                                <h1 class="no-margins">34</h1>
+                                <h1 class="no-margins" id="sysFileNumber">0</h1>
                                 <small>系统总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layuimini-main layui-top-box" sec:authorize="hasRole('ROLE_USER')">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md6">
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel layui-bg-green">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <span class="label pull-right layui-bg-orange">非实时</span>
+                                <h3>设备统计</h3>
+                            </div>
+                            <div class="panel-content">
+                                <h1 class="no-margins" id="userClientNumber">0</h1>
+                                <small>用户总记录数</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel layui-bg-orange">
+                        <div class="panel-body">
+                            <div class="panel-title">
+                                <span class="label pull-right layui-bg-cyan">实时</span>
+                                <h3>语种识别统计</h3>
+                            </div>
+                            <div class="panel-content">
+                                <h1 class="no-margins" id="userFileNumber">0</h1>
+                                <small>用户总记录数</small>
                             </div>
                         </div>
                     </div>
@@ -84,63 +119,156 @@
     </div>
 </div>
 
-<script src="/layui/layui.js" charset="utf-8"></script>
+</body>
+<script src="/js/jquery.js"></script>
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
 <!-- 引入echarts.min.js，注意路径 -->
 <script src="/js/echarts.min.js"></script>
-
-<script type="text/javascript">
+<script th:inline="javascript"><!--这句是获取userName的重点-->
+    var $ = layui.jquery;
+    // 初始化两个数组，盛装从数据库中获取到的数据
+    var dateTime = [], lreCount = [];
+    // 初始化一个，缓存系统相关的统计数据
+    var statsInfo = [0, 0, 0, 0, 0];
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('chart'));
-    var option;
-    option = {
-        title:{
-            text:'语种识别服务请求统计'
-        },
-        tooltip: {
-            transitionDuration: 0,    // 防止浏览器抖动
-            trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
-                shadowStyle : {       // 阴影指示器样式设置
-                    width: 'auto'     // 阴影大小
-                }
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: [
-            {
-                type: 'category',
-                data: ['2021-01-20', '2021-01-21', '2021-01-22', '2021-01-23', '2021-01-24', '2021-01-25', '2021-01-26'],
-                axisTick: {
-                    alignWithLabel: true
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '服务请求次数',
-                type: 'bar',
-                barWidth: '30%',
-                itemStyle:{
-                    normal:{
-                        color:'#4671C6'
+    $(function () {
+        getSetSTATS();
+        // echarts实例配置
+        var option = {
+            title:{
+                text:'语种识别服务请求统计'
+            },
+            tooltip: {
+                transitionDuration: 0,    // 防止浏览器抖动
+                trigger: 'axis',
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
+                    shadowStyle : {       // 阴影指示器样式设置
+                        width: 'auto'     // 阴影大小
                     }
-                },
-                data: [5, 4, 7, 7, 1, 4, 6]
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: dateTime,
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '服务请求次数',
+                    type: 'bar',
+                    barWidth: '30%',
+                    itemStyle:{
+                        normal:{
+                            color:'#4671C6'
+                        }
+                    },
+                    data: lreCount
+                }
+            ]
+        };
+        $.get('/index/stats/fileInfo', function (data) {
+            console.log(data);
+            if (data) {
+                for (var i=data.length-1; i>=0 && i>=data.length-7; i--) {
+                    dateTime.push(data[i].createDay);
+                    lreCount.push(data[i].dayCount);
+                }
+                dateTime.reverse();
+                lreCount.reverse();
+                console.log(dateTime);
+                console.log(lreCount);
             }
-        ]
-    };
-    myChart.setOption(option);
+            myChart.setOption(option);
+        });
+
+        var clientWebSocket;
+        if(typeof(WebSocket) == "undefined") {
+            console.log("您的浏览器不支持WebSocket");
+        } else {
+            console.log("您的浏览器支持WebSocket");
+            clientWebSocket = new WebSocket("ws://localhost:8080/websocket");
+            // 打开事件
+            clientWebSocket.onopen = function() {
+                console.log("Socket 已打开");
+            };
+            // 获得消息事件
+            clientWebSocket.onmessage = function(msg) {
+                console.log(msg.data);
+                dataUpdate(msg.data);
+                // 发现消息进入,开始处理前端触发逻辑
+            };
+            // 关闭事件
+            clientWebSocket.onclose = function() {
+                console.log("Socket 已关闭");
+            };
+            // 发生了错误事件
+            clientWebSocket.onerror = function() {
+                alert("Socket发生了错误");
+                // 此时可以尝试刷新页面
+            }
+        };
+        
+    });
+    
+    // 获取统计信息
+    function getSetSTATS() {
+        var userName = [[${userName}]];
+        CoreUtil.sendGet("/index/stats/info/"+userName, null, function (res) {
+            if (res.data != null) {
+                $('#userNumber').text(res.data.userNumber);
+                $('#sysClientNumber').text(res.data.sysClientNumber);
+                $('#sysFileNumber').text(res.data.sysFileNumber);
+                $('#userClientNumber').text(res.data.userClientNumber);
+                $('#userFileNumber').text(res.data.userFileNumber);
+                statsInfo[0] = res.data.userNumber;
+                statsInfo[1] = res.data.sysClientNumber;
+                statsInfo[2] = res.data.sysFileNumber;
+                statsInfo[3] = res.data.userClientNumber;
+                statsInfo[4] = res.data.userFileNumber;
+            }
+        });
+    }
+
+    function dataUpdate(newData) {
+        if (newData == null) return;
+        statsInfo[2] += 1;
+        statsInfo[4] += 1;
+        $('#sysFileNumber').text(statsInfo[2]);
+        $('#userFileNumber').text(statsInfo[4]);
+        if (newData == dateTime[dateTime.length-1]) {   // 最近一天内的语种识别
+            lreCount[lreCount.length-1] += 1;
+        } else {    // 删除数组首元素
+            dateTime.shift();
+            lreCount.shift();
+            dateTime.push(newData);
+            lreCount.push(1);
+        }
+        myChart.setOption({
+            xAxis: {
+                data: dateTime
+            },
+            series: [{
+                data: lreCount
+            }]
+        });
+    }
 </script>
-</body>
 </html>

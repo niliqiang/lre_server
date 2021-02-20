@@ -73,4 +73,9 @@ public class UserServiceImpl implements UserService {
         sysUserMapper.updateUserStatusByPrimaryKey(sysUser);
         return JsonResult.success("用户状态更新成功");
     }
+
+    @Override
+    public Integer getUserNumber() {
+        return sysUserMapper.selectAll().size();
+    }
 }

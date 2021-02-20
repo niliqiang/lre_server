@@ -6,8 +6,10 @@ import com.lre_server.common.config.FileUploadProperties;
 import com.lre_server.common.tools.DateUtil;
 import com.lre_server.common.tools.JsonResult;
 import com.lre_server.common.tools.ResponseCode;
+import com.lre_server.common.websocket.WebSocketServer;
 import com.lre_server.dao.FileInfoMapper;
 import com.lre_server.entity.FileInfo;
+import com.lre_server.entity.StatsInfoEntity;
 import com.lre_server.service.FileService;
 import com.lre_server.service.UserService;
 import org.apache.commons.io.FileUtils;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -97,6 +100,8 @@ public class FileServiceImpl implements FileService {
                 fileInfo.setStatus((byte) 1);
                 fileInfo.setCreateTime(fileUploadTime);
                 fileInfoMapper.insert(fileInfo);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                WebSocketServer.sendInfo(simpleDateFormat.format(fileUploadTime));
                 return JsonResult.success("文件上传成功，请稍后...");
             } catch (Exception e) {
                 return JsonResult.fail("文件上传失败，请重试");
@@ -143,4 +148,15 @@ public class FileServiceImpl implements FileService {
         return JsonResult.success("文件删除成功");
     }
 
+    @Override
+    public Integer getFileNumber(Integer userId) {
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setUserId(userId);
+        return fileInfoMapper.selectFileList(fileInfo).size();
+    }
+
+    @Override
+    public List<StatsInfoEntity> getFileStatsInfoList(Integer userId) {
+        return fileInfoMapper.selectFileStatsInfoList(userId);
+    }
 }

@@ -78,4 +78,11 @@ public class ClientServiceImpl implements ClientService {
         userClientMapper.updateClientStatusByPrimaryKey(userClient);
         return JsonResult.success("设备状态更新成功");
     }
+
+    @Override
+    public Integer getClientNumber(Integer userId) {
+        UserClient userClient = new UserClient();
+        userClient.setUserId(userId);
+        return userClientMapper.selectClientList(userClient).size();
+    }
 }

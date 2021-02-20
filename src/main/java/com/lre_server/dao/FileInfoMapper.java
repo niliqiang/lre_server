@@ -1,6 +1,7 @@
 package com.lre_server.dao;
 
 import com.lre_server.entity.FileInfo;
+import com.lre_server.entity.StatsInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -51,4 +52,6 @@ public interface FileInfoMapper {
     int updateByPrimaryKey(FileInfo record);
 
     List<FileInfo> selectFileList(@Param(value = "fileInfo") FileInfo fileInfo);
+
+    List<StatsInfoEntity> selectFileStatsInfoList(@Param(value = "userId") Integer userId);
 }
