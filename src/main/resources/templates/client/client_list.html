@@ -284,12 +284,10 @@
 
         //监听状态操作
         form.on('switch(statusSwitch)', function(obj){
-            console.log(obj);
             var data = {
                 clientId: obj.value,
                 status: obj.elem.checked ? 1 : 0
             };
-            console.log(data);
             CoreUtil.sendPost("/client/status/update", data, function (res) {
                 layer.msg(res.msg);
             });

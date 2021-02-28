@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +73,7 @@ public class FileServiceImpl implements FileService {
             return JsonResult.fail("文件为空");
         }
         //存储文件夹
-        Date fileUploadTime = new Date();
+        Date fileUploadTime = Timestamp.valueOf(DateUtil.formatNormalDateTimeString(new Date()));   // 忽略毫秒
         String createTime = DateUtil.formatNormalDateString(fileUploadTime);
         String newPath = fileUploadProperties.getPath() + createTime + File.separator;
         File uploadDirectory = new File(newPath);
@@ -86,8 +87,10 @@ public class FileServiceImpl implements FileService {
         String currentUserName = userService.getCurrentUserName();
         if (currentUserName != null) {
             try {
-                String fileName = file.getOriginalFilename();
-                String newFileName = createTime + " " + currentUserName + " " + fileName;
+                String originalFilename = file.getOriginalFilename();
+                String fileName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+                String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+                String newFileName = currentUserName + "_" + fileName + "_" + DateUtil.formatNormalTimeString(fileUploadTime).replace(":", "") + fileSuffix;
                 String newFilePath = newPath + newFileName;
                 //创建保存文件对象
                 File saveFile = new File(newFilePath);
@@ -100,8 +103,7 @@ public class FileServiceImpl implements FileService {
                 fileInfo.setStatus((byte) 1);
                 fileInfo.setCreateTime(fileUploadTime);
                 fileInfoMapper.insert(fileInfo);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                WebSocketServer.sendInfo(simpleDateFormat.format(fileUploadTime));
+                WebSocketServer.sendInfo(createTime);
                 return JsonResult.success("文件上传成功，请稍后...");
             } catch (Exception e) {
                 return JsonResult.fail("文件上传失败，请重试");
@@ -113,13 +115,14 @@ public class FileServiceImpl implements FileService {
     /**
      * 文件下载
      * @param response
-     * @param fileName
+     * @param fileId
      * @return
      */
     @Override
-    public JsonResult downloadFile(HttpServletResponse response, String fileName){
-        String[] fileNameStr =  fileName.split(" ");
-        String fileFullPath = fileUploadProperties.getPath() + fileNameStr[0] + File.separator + fileName;
+    public JsonResult downloadFile(HttpServletResponse response, Integer fileId){
+        FileInfo fileInfo = fileInfoMapper.selectByPrimaryKey(fileId);
+        String fileName = fileInfo.getFileName();
+        String fileFullPath = fileUploadProperties.getPath() + DateUtil.formatNormalDateString(fileInfo.getCreateTime()) + File.separator + fileName;
         File packetFile = new File(fileFullPath);
         if (packetFile.exists()) {
             try {

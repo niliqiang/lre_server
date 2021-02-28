@@ -1,7 +1,6 @@
 package com.lre_server.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lre_server.entity.FileInfo;
 import com.lre_server.entity.StatsInfoEntity;
 import com.lre_server.service.ClientService;
 import com.lre_server.service.FileService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**

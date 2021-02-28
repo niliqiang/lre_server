@@ -45,10 +45,10 @@ public class FileController {
         return fileService.browserAddFile(file);
     }
 
-    @RequestMapping(value = "/download/{fileName}")
+    @RequestMapping(value = "/download/{fileId}")
     @ResponseBody
-    public JsonResult downloadFile(HttpServletResponse response, @PathVariable("fileName") String fileName) {
-        return fileService.downloadFile(response, fileName);
+    public JsonResult downloadFile(HttpServletResponse response, @PathVariable("fileId") Integer fileId) {
+        return fileService.downloadFile(response, fileId);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)

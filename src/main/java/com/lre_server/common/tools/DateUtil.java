@@ -61,5 +61,14 @@ public class DateUtil {
 		String pattern = "yyyy-MM-dd";
 		return DateFormatUtils.format(date, pattern);
 	}
-	
+
+	/**
+	 * 生成时分秒时间
+	 * @param date
+	 * @return
+	 */
+	public static String formatNormalTimeString(Date date){
+		String pattern = "HH:mm:ss";
+		return DateFormatUtils.format(date, pattern);
+	}
 }

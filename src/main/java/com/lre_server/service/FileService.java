@@ -26,7 +26,7 @@ public interface FileService {
 
     JsonResult browserAddFile(MultipartFile file);
 
-    JsonResult downloadFile(HttpServletResponse response, String fileName);
+    JsonResult downloadFile(HttpServletResponse response, Integer fileId);
 
     JsonResult deleteFile(List<Integer> fileIds);
 

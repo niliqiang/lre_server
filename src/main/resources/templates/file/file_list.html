@@ -174,7 +174,7 @@
                     break;
                 case 'download':
                     $.ajax({
-                        url: "/file/download/"+data.fileName,
+                        url: "/file/download/"+data.fileId,
                         cache: false,
                         async: true,
                         data: null,
@@ -185,7 +185,7 @@
                             layer.msg(res.msg);
                         },
                         error:function () {
-                            window.location.href="/file/download/"+data.fileName;
+                            window.location.href="/file/download/"+data.fileId;
                         }
                     });
                     break;

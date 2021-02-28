@@ -204,7 +204,10 @@
             console.log("您的浏览器不支持WebSocket");
         } else {
             console.log("您的浏览器支持WebSocket");
-            clientWebSocket = new WebSocket("ws://localhost:8080/websocket");
+            // 实验室188服务器
+            clientWebSocket = new WebSocket("ws://10.112.212.188:8102/websocket");
+            // 阿里云服务器
+            // clientWebSocket = new WebSocket("ws://182.92.82.54:8102/websocket");
             // 打开事件
             clientWebSocket.onopen = function() {
                 console.log("Socket 已打开");
