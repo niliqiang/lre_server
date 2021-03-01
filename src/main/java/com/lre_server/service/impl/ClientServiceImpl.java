@@ -30,11 +30,11 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public PageInfo<UserClient> queryClientList(UserClient userClient, HttpServletRequest request) {
-        PageHelper.startPage(userClient.getPage(), userClient.getLimit());
         if (request.isUserInRole("ROLE_USER")) {
             String currentUserName = userService.getCurrentUserName();
             userClient.setUserId(userService.queryByUserName(currentUserName).getUserId());
         }
+        PageHelper.startPage(userClient.getPage(), userClient.getLimit());
         List<UserClient> userClientList = userClientMapper.selectClientList(userClient);
         PageInfo<UserClient> pageClientInfo = new PageInfo<>(userClientList);
         return pageClientInfo;

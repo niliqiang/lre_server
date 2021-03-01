@@ -28,12 +28,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public PageInfo<SessionInfo> querySessionList(SessionInfo sessionInfo, HttpServletRequest request) {
-        PageHelper.startPage(sessionInfo.getPage(), sessionInfo.getLimit());
         Integer userId = null;
         if (request.isUserInRole("ROLE_USER")) {
             String currentUserName = userService.getCurrentUserName();
             userId = userService.queryByUserName(currentUserName).getUserId();
         }
+        PageHelper.startPage(sessionInfo.getPage(), sessionInfo.getLimit());
         List<SessionInfo> sessionInfoList = sessionInfoMapper.selectSessionList(sessionInfo, userId);
         PageInfo<SessionInfo> pageSessionInfo = new PageInfo<>(sessionInfoList);
         return pageSessionInfo;

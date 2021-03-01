@@ -51,11 +51,11 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public PageInfo<FileInfo> queryFileList(FileInfo fileInfo, HttpServletRequest request) {
-        PageHelper.startPage(fileInfo.getPage(), fileInfo.getLimit());
         if (request.isUserInRole("ROLE_USER")) {
             String currentUserName = userService.getCurrentUserName();
             fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
         }
+        PageHelper.startPage(fileInfo.getPage(), fileInfo.getLimit());
         List<FileInfo> fileInfoList = fileInfoMapper.selectFileList(fileInfo);
         PageInfo<FileInfo> pageFileInfo = new PageInfo<>(fileInfoList);
         return pageFileInfo;
