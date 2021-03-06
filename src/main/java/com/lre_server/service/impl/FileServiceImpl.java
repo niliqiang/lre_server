@@ -77,11 +77,11 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public JsonResult browserAddFile(MultipartFile file) {
-        //判断文件是否空
+        // 判断文件是否空
         if (file == null || file.getOriginalFilename() == null || "".equalsIgnoreCase(file.getOriginalFilename().trim())) {
             return JsonResult.fail("文件为空");
         }
-        //存储文件夹
+        // 存储文件夹
         Date fileUploadTime = Timestamp.valueOf(DateUtil.formatNormalDateTimeString(new Date()));   // 忽略毫秒
         String createTime = DateUtil.formatNormalDateString(fileUploadTime);
         String newPath = fileUploadProperties.getPath() + createTime + File.separator;
@@ -199,9 +199,9 @@ public class FileServiceImpl implements FileService {
             }
             try {
                 process.waitFor();
-                lreResult = output.substring(0, 2);
+                lreResult = output.toString().split("\n")[0];
                 switch (lreResult) {
-                    case "zh":
+                    case "zh-CN":
                         res = 1;
                         break;
                     case "en":
@@ -217,7 +217,7 @@ public class FileServiceImpl implements FileService {
                         res = 5;
                         break;
                     default:
-                        res = -1;
+                        res = 0;
                         logger.info(output.toString());
                         break;
                 }
