@@ -58,4 +58,11 @@ public interface UserService {
      * @return
      */
     Integer getUserNumber();
+
+    /**
+     * 获取用户的角色名
+     * @param userName
+     * @return
+     */
+    String getUserRoleName(String userName);
 }

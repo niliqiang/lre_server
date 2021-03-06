@@ -127,6 +127,7 @@
 <script src="/js/echarts.min.js"></script>
 <script th:inline="javascript"><!--这句是获取userName的重点-->
     var $ = layui.jquery;
+    var userName = [[${userName}]];
     // 初始化两个数组，盛装从数据库中获取到的数据
     var dateTime = [], lreCount = [];
     // 初始化一个，缓存系统相关的统计数据
@@ -205,9 +206,11 @@
         } else {
             console.log("您的浏览器支持WebSocket");
             // 实验室188服务器
-            clientWebSocket = new WebSocket("ws://10.112.212.188:8102/websocket");
+            clientWebSocket = new WebSocket("ws://10.112.212.188:8102/websocket/" + userName);
             // 阿里云服务器
-            // clientWebSocket = new WebSocket("ws://182.92.82.54:8102/websocket");
+            // clientWebSocket = new WebSocket("ws://182.92.82.54:8102/websocket/" + userName);
+            // 本地
+            // clientWebSocket = new WebSocket("ws://localhost:8102/websocket/" + userName);
             // 打开事件
             clientWebSocket.onopen = function() {
                 console.log("Socket 已打开");
@@ -233,7 +236,6 @@
     
     // 获取统计信息
     function getSetSTATS() {
-        var userName = [[${userName}]];
         CoreUtil.sendGet("/index/stats/info/"+userName, null, function (res) {
             if (res.data != null) {
                 $('#userNumber').text(res.data.userNumber);

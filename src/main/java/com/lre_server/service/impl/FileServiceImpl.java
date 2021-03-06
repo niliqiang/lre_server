@@ -13,6 +13,8 @@ import com.lre_server.entity.StatsInfoEntity;
 import com.lre_server.service.FileService;
 import com.lre_server.service.UserService;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +47,11 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private UserService userService;
+
+    private static final String SHELL_FILE = "run_lr.sh";
+    private static final String SHELL_FILE_DIR = "/home/admin/users/niliqiang/kaldi_lre/v1";
+
+    static Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
      * 查询文件列表
@@ -92,18 +101,21 @@ public class FileServiceImpl implements FileService {
                 String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
                 String newFileName = currentUserName + "_" + fileName + "_" + DateUtil.formatNormalTimeString(fileUploadTime).replace(":", "") + fileSuffix;
                 String newFilePath = newPath + newFileName;
-                //创建保存文件对象
+                // 创建保存文件对象
                 File saveFile = new File(newFilePath);
                 FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
-                //保存文件记录
+                // 调用语种识别脚本
+                Byte lreResult = languageRecognize(createTime + File.separator + newFileName);
+                // 保存文件记录
                 FileInfo fileInfo = new FileInfo();
-                fileInfo.setUserId(userService.queryByUserName(currentUserName).getUserId());
+                Integer userId = userService.queryByUserName(currentUserName).getUserId();
+                fileInfo.setUserId(userId);
                 fileInfo.setFileName(newFileName);
-                fileInfo.setLreResult((byte) -1);
+                fileInfo.setLreResult(lreResult);
                 fileInfo.setStatus((byte) 1);
                 fileInfo.setCreateTime(fileUploadTime);
                 fileInfoMapper.insert(fileInfo);
-                WebSocketServer.sendInfo(createTime);
+                WebSocketServer.sendToUser(currentUserName, createTime);
                 return JsonResult.success("文件上传成功，请稍后...");
             } catch (Exception e) {
                 return JsonResult.fail("文件上传失败，请重试");
@@ -161,5 +173,71 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<StatsInfoEntity> getFileStatsInfoList(Integer userId) {
         return fileInfoMapper.selectFileStatsInfoList(userId);
+    }
+
+    public Byte languageRecognize(String argShell) {
+        ProcessBuilder pb = new ProcessBuilder("./" + SHELL_FILE, argShell);
+        pb.directory(new File(SHELL_FILE_DIR));
+        Process process = null;
+        BufferedReader bufferIn  = null;
+        BufferedReader bufferErr  = null;
+        StringBuffer output = new StringBuffer();
+        String lreResult = null;
+        Byte res = null;
+        try {
+            process = pb.start();
+            // 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
+            bufferIn  = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+            bufferErr  = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+            // 读取输出
+            String line = null;
+            while ((line = bufferIn.readLine()) != null) {
+                output.append(line).append('\n');
+            }
+            while ((line = bufferErr.readLine()) != null) {
+                output.append(line).append('\n');
+            }
+            try {
+                process.waitFor();
+                lreResult = output.substring(0, 2);
+                switch (lreResult) {
+                    case "zh":
+                        res = 1;
+                        break;
+                    case "en":
+                        res = 2;
+                        break;
+                    case "ru":
+                        res = 3;
+                        break;
+                    case "es":
+                        res = 4;
+                        break;
+                    case "ar":
+                        res = 5;
+                        break;
+                    default:
+                        res = -1;
+                        logger.info(output.toString());
+                        break;
+                }
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
+            if (bufferIn != null) {
+                try {
+                    bufferIn.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+        return res;
     }
 }

@@ -3,7 +3,9 @@ package com.lre_server.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lre_server.common.tools.JsonResult;
+import com.lre_server.dao.SysRoleMapper;
 import com.lre_server.dao.SysUserMapper;
+import com.lre_server.dao.SysUserRoleMapper;
 import com.lre_server.entity.SysUser;
 import com.lre_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
 
     @Override
     public String getCurrentUserName() {
@@ -77,5 +83,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer getUserNumber() {
         return sysUserMapper.selectAll().size();
+    }
+
+    @Override
+    public String getUserRoleName(String userName) {
+        Integer userId = sysUserMapper.selectByUserName(userName).getUserId();
+        Integer roleId = sysUserRoleMapper.selectByUserId(userId).getRoleId();
+        return sysRoleMapper.selectByPrimaryKey(roleId).getRoleName();
     }
 }
