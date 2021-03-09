@@ -27,7 +27,7 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/query-list")
     @ResponseBody
     public String queryList(FileInfo fileInfo, HttpServletRequest request) {
         PageInfo pageObj = fileService.queryFileList(fileInfo, request);
@@ -39,15 +39,15 @@ public class FileController {
         return jo.toString();
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload/from-browser", method = RequestMethod.POST)
     @ResponseBody
     public JsonResult browserAddFile(@RequestParam(value = "file") MultipartFile file) {
         return fileService.browserAddFile(file);
     }
 
-    @RequestMapping(value = "/download/{fileId}")
+    @RequestMapping(value = "/download/{file-id}")
     @ResponseBody
-    public JsonResult downloadFile(HttpServletResponse response, @PathVariable("fileId") Integer fileId) {
+    public JsonResult downloadFile(HttpServletResponse response, @PathVariable("file-id") Integer fileId) {
         return fileService.downloadFile(response, fileId);
     }
 
@@ -55,5 +55,11 @@ public class FileController {
     @ResponseBody
     public JsonResult deleteFile(@RequestBody List<Integer> fileIds) {
         return fileService.deleteFile(fileIds);
+    }
+
+    @RequestMapping(value = "/upload/from-client", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult clientAddFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "sessionId") String sessionId) {
+        return fileService.clientAddFile(file, sessionId);
     }
 }

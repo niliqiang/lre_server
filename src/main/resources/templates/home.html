@@ -185,8 +185,7 @@
                 }
             ]
         };
-        $.get('/index/stats/fileInfo', function (data) {
-            console.log(data);
+        $.get('/index/stats/file-info', function (data) {
             if (data) {
                 for (var i=data.length-1; i>=0 && i>=data.length-7; i--) {
                     dateTime.push(data[i].createDay);
@@ -194,8 +193,6 @@
                 }
                 dateTime.reverse();
                 lreCount.reverse();
-                console.log(dateTime);
-                console.log(lreCount);
             }
             myChart.setOption(option);
         });
@@ -217,7 +214,6 @@
             };
             // 获得消息事件
             clientWebSocket.onmessage = function(msg) {
-                console.log(msg.data);
                 dataUpdate(msg.data);
                 // 发现消息进入,开始处理前端触发逻辑
             };

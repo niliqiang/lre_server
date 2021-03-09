@@ -42,7 +42,7 @@ public class JsonResult {
     }
 
     /**
-     * 有数据返回，人为指定状态码和提示信息
+     * 有数据返回，人为指定数据、状态码和提示信息
      */
     public JsonResult(Object data, int code, String msg) {
         this.data = data;
@@ -67,7 +67,7 @@ public class JsonResult {
     }
 
     /**
-     * 操作成功 data和msg不为null
+     * 操作成功 data为null 自定义msg
      * @return
      */
     public static JsonResult success(String msg) {

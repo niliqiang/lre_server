@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/query-list")
     @ResponseBody
     public String queryUserList(SysUser sysUser) {
         PageInfo pageObj = userService.queryUserList(sysUser);
@@ -36,9 +36,9 @@ public class UserController {
         return jo.toString();
     }
 
-    @RequestMapping(value = "/info/{userName}")
+    @RequestMapping(value = "/info/{user-name}")
     @ResponseBody
-    public JsonResult queryUserInfo(@PathVariable("userName") String userName) {
+    public JsonResult queryUserInfo(@PathVariable("user-name") String userName) {
         return JsonResult.success(userService.queryByUserName(userName));
     }
 

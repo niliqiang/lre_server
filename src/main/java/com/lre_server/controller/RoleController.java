@@ -24,7 +24,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/query-list")
     @ResponseBody
     public String queryRoleList(SysRole sysRole) {
         PageInfo pageObj = roleService.queryRoleList(sysRole);

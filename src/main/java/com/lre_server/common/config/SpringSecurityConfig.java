@@ -50,7 +50,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // 允许无授权访问 "/login"、"/register" "/register-save"
         // 其他地址的访问均需验证权限
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/register-save", "/error").permitAll()
+                .antMatchers("/login", "/register", "/register-save", "/error", "/file/upload/from-client").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

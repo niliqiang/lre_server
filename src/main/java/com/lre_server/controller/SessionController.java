@@ -25,7 +25,7 @@ public class SessionController {
     @Autowired
     private SessionService sessionService;
 
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/query-list")
     @ResponseBody
     public String queryList(SessionInfo sessionInfo, HttpServletRequest request) {
         PageInfo pageObj = sessionService.querySessionList(sessionInfo, request);

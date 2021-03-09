@@ -82,7 +82,7 @@
         var upload = layui.upload;
         tableIns = table.render({
             elem: '#fileTable'
-            , url:'/file/queryList'
+            , url:'/file/query-list'
             , page: true    //开启分页，默认page=1，limit=10
             , initSort: {   //默认按照时间倒序排列
                 field: 'createTime',
@@ -117,17 +117,17 @@
             , toolbar: '#toolbar'
         });
 
-        //执行实例
+        // 执行实例
         var uploadIns = upload.render({
-            elem: '#upload' //绑定元素
-            ,url: '/file/upload'    //上传接口
+            elem: '#upload' // 绑定元素
+            ,url: '/file/upload/from-browser'    // 浏览器文件上传接口
             ,accept: 'audio'
             ,done: function(res){
                 search();
-                //上传完毕回调
+                // 上传完毕回调
             }
             ,error: function(){
-                //请求异常回调
+                // 请求异常回调
             }
         });
 

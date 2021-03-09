@@ -24,10 +24,26 @@ public interface FileService {
      */
     PageInfo<FileInfo> queryFileList(FileInfo fileInfo, HttpServletRequest request);
 
+    /**
+     * 浏览器上传音频文件
+     * @param file
+     * @return
+     */
     JsonResult browserAddFile(MultipartFile file);
 
+    /**
+     * 前端下载缓存文件
+     * @param response
+     * @param fileId
+     * @return
+     */
     JsonResult downloadFile(HttpServletResponse response, Integer fileId);
 
+    /**
+     * 根据文件ID删除对应文件
+     * @param fileIds
+     * @return
+     */
     JsonResult deleteFile(List<Integer> fileIds);
 
     /**
@@ -43,4 +59,12 @@ public interface FileService {
      * @return
      */
     List<StatsInfoEntity> getFileStatsInfoList(Integer userId);
+
+    /**
+     * 终端上传音频文件
+     * @param file
+     * @param sessionId
+     * @return
+     */
+    JsonResult clientAddFile(MultipartFile file, String sessionId);
 }

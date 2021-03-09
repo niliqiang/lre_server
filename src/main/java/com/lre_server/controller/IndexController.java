@@ -54,9 +54,9 @@ public class IndexController {
         return "home";
     }
 
-    @RequestMapping("/stats/info/{userName}")
+    @RequestMapping("/stats/info/{user-name}")
     @ResponseBody
-    public String getStatsInfo(@PathVariable("userName") String userName) {
+    public String getStatsInfo(@PathVariable("user-name") String userName) {
         // 用户统计
         Integer userNumber = userService.getUserNumber();
         // 设备统计
@@ -78,7 +78,7 @@ public class IndexController {
         return jo.toString();
     }
 
-    @RequestMapping("/stats/fileInfo")
+    @RequestMapping("/stats/file-info")
     @ResponseBody
     public List<StatsInfoEntity> getFileStatsInfoList(HttpServletRequest request) {
         // 管理员用户不区分userId

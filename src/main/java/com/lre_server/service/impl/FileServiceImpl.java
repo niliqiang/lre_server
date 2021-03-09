@@ -8,7 +8,11 @@ import com.lre_server.common.tools.JsonResult;
 import com.lre_server.common.tools.ResponseCode;
 import com.lre_server.common.websocket.WebSocketServer;
 import com.lre_server.dao.FileInfoMapper;
+import com.lre_server.dao.SessionInfoMapper;
+import com.lre_server.dao.SysUserMapper;
+import com.lre_server.dao.UserClientMapper;
 import com.lre_server.entity.FileInfo;
+import com.lre_server.entity.SessionInfo;
 import com.lre_server.entity.StatsInfoEntity;
 import com.lre_server.service.FileService;
 import com.lre_server.service.UserService;
@@ -47,6 +51,15 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SessionInfoMapper sessionInfoMapper;
+
+    @Autowired
+    private UserClientMapper userClientMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     private static final String SHELL_FILE = "run_lr.sh";
     private static final String SHELL_FILE_DIR = "/home/admin/users/niliqiang/kaldi_lre/v1";
@@ -175,6 +188,59 @@ public class FileServiceImpl implements FileService {
         return fileInfoMapper.selectFileStatsInfoList(userId);
     }
 
+    public JsonResult clientAddFile(MultipartFile file, String sessionId) {
+        // 判断文件是否空
+        if (file == null || file.getOriginalFilename() == null || "".equalsIgnoreCase(file.getOriginalFilename().trim())) {
+            return JsonResult.fail("音频数据为空");
+        }
+        SessionInfo sessionInfo = sessionInfoMapper.selectByPrimaryKey(sessionId);
+        if (sessionInfo != null && sessionInfo.getLreResult() == null) {  // 当前会话存在且未失效
+            String clientId = sessionInfo.getClientId();
+            String clientName = userClientMapper.selectByPrimaryKey(clientId).getClientName();
+            Integer userId = userClientMapper.selectByPrimaryKey(clientId).getUserId();
+            String userName = sysUserMapper.selectByPrimaryKey(userId).getUserName();
+            // 存储文件夹
+            Date fileUploadTime = Timestamp.valueOf(DateUtil.formatNormalDateTimeString(new Date()));   // 忽略毫秒
+            String createTime = DateUtil.formatNormalDateString(fileUploadTime);
+            String newPath = fileUploadProperties.getPath() + createTime + File.separator;
+            File uploadDirectory = new File(newPath);
+            if (uploadDirectory.exists()) {
+                if (!uploadDirectory.isDirectory()) {
+                    uploadDirectory.delete();
+                }
+            } else {
+                uploadDirectory.mkdir();
+            }
+            try {
+                String newFileName = userName + "_" + clientName + "_" + DateUtil.formatNormalTimeString(fileUploadTime).replace(":", "") + ".pcm";
+                String newFilePath = newPath + newFileName;
+                // 创建保存文件对象
+                File saveFile = new File(newFilePath);
+                FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
+                // 调用语种识别脚本
+                Byte lreResult = languageRecognize(createTime + File.separator + newFileName);
+                // 保存文件记录
+                FileInfo fileInfo = new FileInfo();
+                fileInfo.setUserId(userId);
+                fileInfo.setFileName(newFileName);
+                fileInfo.setLreResult(lreResult);
+                fileInfo.setStatus((byte) 1);
+                fileInfo.setCreateTime(fileUploadTime);
+                fileInfoMapper.insert(fileInfo);
+                WebSocketServer.sendToUser(userName, createTime);
+                return JsonResult.success("音频数据上传成功，请稍后...");
+            } catch (Exception e) {
+                return JsonResult.fail("音频数据上传失败，请重试");
+            }
+        }
+        return JsonResult.fail("终端设备鉴权失败，请重新唤醒识别");
+    }
+
+    /**
+     * 调用shell脚本进行语种识别
+     * @param argShell
+     * @return
+     */
     public Byte languageRecognize(String argShell) {
         ProcessBuilder pb = new ProcessBuilder("./" + SHELL_FILE, argShell);
         pb.directory(new File(SHELL_FILE_DIR));

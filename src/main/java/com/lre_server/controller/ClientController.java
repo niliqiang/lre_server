@@ -25,7 +25,7 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/query-list")
     @ResponseBody
     public String queryClientList(UserClient userClient, HttpServletRequest request) {
         PageInfo pageObj = clientService.queryClientList(userClient, request);
