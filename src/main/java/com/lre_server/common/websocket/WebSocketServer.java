@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint("/websocket/{userName}")
 @Component
 public class WebSocketServer {
-    static Logger logger= LoggerFactory.getLogger(WebSocketServer.class);
+    private static Logger logger= LoggerFactory.getLogger(WebSocketServer.class);
     // 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
     // concurrent包的线程安全HashMap，用来存放每个客户端对应的WebSocket对象。
@@ -34,6 +34,7 @@ public class WebSocketServer {
 
     // 因为websocket是多实例单线程的，而websocket中的对象在@Autowried时，只有整个项目启动时会注入
     // 之后新的websocket实例都不会再次注入，故websocket上@Autowried的bean是会为null的
+    // 手动注入
     private static UserService userService;
     @Autowired
     public void setUserService(UserService userService) {

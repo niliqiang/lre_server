@@ -188,6 +188,13 @@ public class FileServiceImpl implements FileService {
         return fileInfoMapper.selectFileStatsInfoList(userId);
     }
 
+    /**
+     * 终端上传音频数据
+     * @param file
+     * @param sessionId
+     * @return
+     */
+    @Override
     public JsonResult clientAddFile(MultipartFile file, String sessionId) {
         // 判断文件是否空
         if (file == null || file.getOriginalFilename() == null || "".equalsIgnoreCase(file.getOriginalFilename().trim())) {
