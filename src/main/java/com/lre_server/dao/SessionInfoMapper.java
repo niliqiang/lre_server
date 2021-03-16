@@ -50,6 +50,12 @@ public interface SessionInfoMapper {
      */
     int updateByPrimaryKey(SessionInfo record);
 
-
     List<SessionInfo> selectSessionList(@Param(value = "sessionInfo") SessionInfo sessionInfo, @Param(value = "userId") Integer userId);
+
+    /**
+     * 根据sessionId更新会话信息和语种识别结果
+     * @param record
+     * @return
+     */
+    int updateSessionInfo(SessionInfo record);
 }

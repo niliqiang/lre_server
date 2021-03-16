@@ -66,10 +66,8 @@ public class FileServiceImpl implements FileService {
 
     private static final String SHELL_FILE = "run_lr.sh";
     private static final String SHELL_FILE_DIR = "/home/admin/users/niliqiang/kaldi_lre/v1";
-
-    static String finishRecognizeStr = "{\"msgId\":30, \"sessionId\":\"\", \"state\":{\"desired\":{\"directive\":\"FinishRecognize\"}}, \"result\":\"\"}";
-
-    static Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
+    private static String finishRecognizeStr = "{\"msgId\":30, \"sessionId\":\"\", \"state\":{\"desired\":{\"directive\":\"FinishRecognize\"}}, \"result\":\"\"}";
+    private static Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
      * 查询文件列表

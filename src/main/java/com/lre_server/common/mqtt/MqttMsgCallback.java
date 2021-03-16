@@ -20,14 +20,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MqttMsgCallback implements MqttCallback {
-    private static Logger logger= LoggerFactory.getLogger(MqttMsgClient.class);
-
     @Autowired
     private MqttConfig mqttConfig;
     @Autowired
     private SessionService sessionService;
 
-    static String connectAckStr = "{\"msgId\":20, \"sessionId\":\"\", \"state\":{\"acknowledge\":{\"connection\":\"\"}}}";
+    private static String connectAckStr = "{\"msgId\":20, \"sessionId\":\"\", \"state\":{\"acknowledge\":{\"connection\":\"\"}}}";
+    private static Logger logger= LoggerFactory.getLogger(MqttMsgClient.class);
 
     @Override
     public void connectionLost(Throwable throwable) {

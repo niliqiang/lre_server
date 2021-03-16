@@ -1,5 +1,6 @@
 package com.lre_server.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.lre_server.common.tools.JsonResult;
 import com.lre_server.entity.SessionInfo;
@@ -28,5 +29,17 @@ public interface SessionService {
      */
     JsonResult deleteSession(List<String> sessionIds);
 
+    /**
+     * 根据clientId添加sessionId
+     * @param clientId
+     * @return userName and sessionId
+     */
     JsonResult addSession(String clientId);
+
+    /**
+     * 根据sessionId和mqtt msg更新sessionInfo
+     * @param jData
+     * @return
+     */
+    JsonResult updateSessionInfo(JSONObject jData);
 }

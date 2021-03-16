@@ -86,4 +86,13 @@
     </if>
     order by create_time desc
   </select>
+  <update id="updateSessionInfo" parameterType="com.lre_server.entity.SessionInfo">
+    <!--
+      added by niliqiang
+    -->
+    update session_info
+    set session_content = #{sessionContent,jdbcType=VARCHAR},
+    lre_result = #{lreResult,jdbcType=TINYINT}
+    where session_id = #{sessionId,jdbcType=VARCHAR}
+  </update>
 </mapper>
