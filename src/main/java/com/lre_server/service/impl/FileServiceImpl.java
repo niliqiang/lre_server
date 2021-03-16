@@ -1,8 +1,11 @@
 package com.lre_server.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lre_server.common.config.FileUploadProperties;
+import com.lre_server.common.mqtt.MqttMsgClient;
 import com.lre_server.common.tools.DateUtil;
 import com.lre_server.common.tools.JsonResult;
 import com.lre_server.common.tools.ResponseCode;
@@ -64,6 +67,8 @@ public class FileServiceImpl implements FileService {
     private static final String SHELL_FILE = "run_lr.sh";
     private static final String SHELL_FILE_DIR = "/home/admin/users/niliqiang/kaldi_lre/v1";
 
+    static String finishRecognizeStr = "{\"msgId\":30, \"sessionId\":\"\", \"state\":{\"desired\":{\"directive\":\"FinishRecognize\"}}, \"result\":\"\"}";
+
     static Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
@@ -118,7 +123,7 @@ public class FileServiceImpl implements FileService {
                 File saveFile = new File(newFilePath);
                 FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
                 // 调用语种识别脚本
-                Byte lreResult = languageRecognize(createTime + File.separator + newFileName);
+                Byte lreResult = languageRecognize(createTime + File.separator + newFileName, null, null);
                 // 保存文件记录
                 FileInfo fileInfo = new FileInfo();
                 Integer userId = userService.queryByUserName(currentUserName).getUserId();
@@ -195,7 +200,7 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public JsonResult clientAddFile(MultipartFile file, String sessionId) {
+    public JsonResult clientAddFile(MultipartFile file, String sessionId, String topicDirective) {
         // 判断文件是否空
         if (file == null || file.getOriginalFilename() == null || "".equalsIgnoreCase(file.getOriginalFilename().trim())) {
             return JsonResult.fail("音频数据为空");
@@ -225,7 +230,7 @@ public class FileServiceImpl implements FileService {
                 File saveFile = new File(newFilePath);
                 FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
                 // 调用语种识别脚本
-                Byte lreResult = languageRecognize(createTime + File.separator + newFileName);
+                Byte lreResult = languageRecognize(createTime + File.separator + newFileName, sessionId, topicDirective);
                 // 保存文件记录
                 FileInfo fileInfo = new FileInfo();
                 fileInfo.setUserId(userId);
@@ -248,7 +253,7 @@ public class FileServiceImpl implements FileService {
      * @param argShell
      * @return
      */
-    public Byte languageRecognize(String argShell) {
+    public Byte languageRecognize(String argShell, String sessionId, String topicDirective) {
         ProcessBuilder pb = new ProcessBuilder("./" + SHELL_FILE, argShell);
         pb.directory(new File(SHELL_FILE_DIR));
         Process process = null;
@@ -293,6 +298,14 @@ public class FileServiceImpl implements FileService {
                         res = 0;
                         logger.info(output.toString());
                         break;
+                }
+                // 推送语种识别结果给终端
+                if (sessionId != null) {
+                    JSONObject jFinishRecognize = JSON.parseObject(finishRecognizeStr);
+                    jFinishRecognize.put("sessionId", sessionId);
+                    jFinishRecognize.put("result", lreResult);
+                    MqttMsgClient.getInstance().publish(topicDirective, jFinishRecognize.toString(), 0);
+                    logger.info("推送消息主题:" + topicDirective);
                 }
             } catch (InterruptedException ie) {
                 ie.printStackTrace();

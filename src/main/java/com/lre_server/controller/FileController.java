@@ -59,7 +59,7 @@ public class FileController {
 
     @RequestMapping(value = "/upload/from-client", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult clientAddFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "sessionId") String sessionId) {
-        return fileService.clientAddFile(file, sessionId);
+    public JsonResult clientAddFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "sessionId") String sessionId, @RequestParam(value = "topicDirective") String topicDirective) {
+        return fileService.clientAddFile(file, sessionId, topicDirective);
     }
 }

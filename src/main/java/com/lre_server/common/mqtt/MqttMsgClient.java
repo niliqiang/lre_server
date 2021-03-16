@@ -37,7 +37,6 @@ public class MqttMsgClient {
     }
 
     private MqttMsgClient() {
-//        connectBroker();
     }
 
     public static MqttMsgClient getInstance() {
@@ -62,35 +61,35 @@ public class MqttMsgClient {
         }
     }
 
+    /**
+     * 主题消息推送
+     * @param topic
+     * @param pushMessage
+     * @param qos
+     */
     public void publish(String topic, String pushMessage, int qos) {
         MqttTopic mTopic = mqttClient.getTopic(topic);
-        MqttMessage message = new MqttMessage();
-        message.setPayload(pushMessage.getBytes());
-        message.setQos(qos);
-        if (null == mTopic) {
-            logger.error("topic not exist");
-        }
-        MqttDeliveryToken mqttDeliveryToken;
+        MqttMessage mMessage = new MqttMessage();
+        mMessage.setPayload(pushMessage.getBytes());
+        mMessage.setQos(qos);
         try {
-            mqttDeliveryToken = mTopic.publish(message);
+            MqttDeliveryToken mqttDeliveryToken = mTopic.publish(mMessage);
             mqttDeliveryToken.waitForCompletion();
-        } catch (MqttPersistenceException e) {
-            e.printStackTrace();
+            logger.info("主题消息推送成功:" + topic);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * 订阅某个主题
-     *
-     * @param topic 主题
-     * @param qos   连接方式
+     * 主题订阅
+     * @param topic
+     * @param qos
      */
     public void subscribe(String topic, int qos) {
-        logger.info("订阅主题" + topic);
         try {
             mqttClient.subscribe(topic, qos);
+            logger.info("主题订阅成功:" + topic);
         } catch (MqttException e) {
             e.printStackTrace();
         }

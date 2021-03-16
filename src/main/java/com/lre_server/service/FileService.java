@@ -66,5 +66,5 @@ public interface FileService {
      * @param sessionId
      * @return
      */
-    JsonResult clientAddFile(MultipartFile file, String sessionId);
+    JsonResult clientAddFile(MultipartFile file, String sessionId, String topicDirective);
 }

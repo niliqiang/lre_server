@@ -27,4 +27,6 @@ public interface SessionService {
      * @return
      */
     JsonResult deleteSession(List<String> sessionIds);
+
+    JsonResult addSession(String clientId);
 }
