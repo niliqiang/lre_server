@@ -25,7 +25,7 @@ public class MqttMsgCallback implements MqttCallback {
     @Autowired
     private SessionService sessionService;
 
-    private static String connectAckStr = "{\"msgId\":20, \"sessionId\":\"\", \"state\":{\"acknowledge\":{\"connection\":\"\"}}}";
+    private static String connectAckStr = "{\"msgId\":20, \"state\":{\"acknowledge\":{}}}";
     private static Logger logger= LoggerFactory.getLogger(MqttMsgClient.class);
 
     @Override
@@ -42,6 +42,10 @@ public class MqttMsgCallback implements MqttCallback {
         logger.info("接收消息Qos:" + message.getQos());
         String strMsg = new String(message.getPayload());
         logger.info("接收消息内容:" + strMsg);
+        // 存储会话信息
+        JSONObject jSessionData = new JSONObject();
+        // 指示会话信息更新标志
+        Boolean updateSessionFlag = true;
         JSONObject jMsg = JSONObject.parseObject(strMsg);
         Integer msgId = jMsg.getInteger("msgId");
         switch (msgId / 10) {
@@ -59,7 +63,7 @@ public class MqttMsgCallback implements MqttCallback {
                     mqttMsgClient.subscribe(topicDirectiveAck, 0);
                     String topicEvent = "lre/"+ partTopic + "/event";
                     mqttMsgClient.subscribe(topicEvent, 0);
-                    // 更新ConnectAck消息并推送
+                    // 更新connectAck消息并推送
                     JSONObject jConnectAck = JSON.parseObject(connectAckStr);
                     jConnectAck.put("sessionId", jResData.getString("sessionId"));
                     jConnectAck.getJSONObject("state").getJSONObject("acknowledge").put("connection", clientName);
@@ -70,14 +74,21 @@ public class MqttMsgCallback implements MqttCallback {
                             mqttMsgClient.publish(topicConnectAck, jConnectAck.toString(), 0);
                         }
                     }.start();
+                    // 更新会话信息
+                    jSessionData.put("msg", "Connect");
+                    jSessionData.put("clientId", clientId);
+                    jSessionData.put("sessionId", jResData.getString("sessionId"));
+                    jSessionData.put("timestamp", System.currentTimeMillis());
+                    sessionService.updateSessionInfo(jSessionData);
                 } else {
-                    logger.info("设备不存在");
+                    logger.info("设备不存在，鉴权失败");
                 }
                 break;
             }
             // TOPIC_PUB_DIRECTIVE_ACK
             case 4: {
                 logger.info("接收终端指令响应:" + jMsg.getJSONObject("state").getJSONObject("acknowledge").getString("directive"));
+                updateSessionFlag = false;
                 break;
             }
             // TOPIC_PUB_EVENT
@@ -86,53 +97,69 @@ public class MqttMsgCallback implements MqttCallback {
                     // WakeUp
                     case 0: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "WakeUp");
                         break;
                     }
                     // StartCapture
                     case 1: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "StartCapture");
                         break;
                     }
                     // StartRecognize
                     case 2: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "StartRecognize");
                         break;
                     }
                     // CompleteTask
                     case 3: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "CompleteTask");
                         break;
                     }
                     // WakeUpTimeOut
                     case 4: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "WakeUpTimeOut");
                         break;
                     }
                     // StopCapture
                     case 5: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "StopCapture");
                         break;
                     }
                     // NeedMoreSpeech
                     case 6: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "NeedMoreSpeech");
                         break;
                     }
                     // ExpectLRAgain
                     case 7: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
+                        jSessionData.put("msg", "ExpectLRAgain");
                         break;
                     }
                     default: {
                         logger.info("msgId 指示的消息不匹配");
+                        updateSessionFlag = false;
                         break;
                     }
                 }
             }
             default: {
                 logger.info("msgId 指示的主题不匹配");
+                updateSessionFlag = false;
                 break;
             }
+        }
+        // 更新会话信息
+        if (msgId / 10 != 1 && updateSessionFlag) {
+            jSessionData.put("sessionId", jMsg.getString("sessionId"));
+            jSessionData.put("timestamp", System.currentTimeMillis());
+            sessionService.updateSessionInfo(jSessionData);
         }
     }
 

@@ -18,6 +18,7 @@ import com.lre_server.entity.FileInfo;
 import com.lre_server.entity.SessionInfo;
 import com.lre_server.entity.StatsInfoEntity;
 import com.lre_server.service.FileService;
+import com.lre_server.service.SessionService;
 import com.lre_server.service.UserService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -48,25 +49,22 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
     @Autowired
     private FileInfoMapper fileInfoMapper;
-
     @Autowired
     private FileUploadProperties fileUploadProperties;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private SessionInfoMapper sessionInfoMapper;
-
+    @Autowired
+    private SessionService sessionService;
     @Autowired
     private UserClientMapper userClientMapper;
-
     @Autowired
     private SysUserMapper sysUserMapper;
 
     private static final String SHELL_FILE = "run_lr.sh";
     private static final String SHELL_FILE_DIR = "/home/admin/users/niliqiang/kaldi_lre/v1";
-    private static String finishRecognizeStr = "{\"msgId\":30, \"sessionId\":\"\", \"state\":{\"desired\":{\"directive\":\"FinishRecognize\"}}, \"result\":\"\"}";
+    private static String finishRecognizeStr = "{\"msgId\":30, \"state\":{\"desired\":{\"directive\":\"FinishRecognize\"}}}";
     private static Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
@@ -229,6 +227,16 @@ public class FileServiceImpl implements FileService {
                 FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
                 // 调用语种识别脚本
                 Byte lreResult = languageRecognize(createTime + File.separator + newFileName, sessionId, topicDirective);
+
+                // 更新会话信息
+                JSONObject jSessionData = new JSONObject();
+                jSessionData.put("msg", "FinishRecognize");
+                jSessionData.put("sessionId", sessionId);
+                jSessionData.put("timestamp", System.currentTimeMillis());
+                jSessionData.put("audioFileName", newFileName);
+                jSessionData.put("result", lreResult);
+                sessionService.updateSessionInfo(jSessionData);
+
                 // 保存文件记录
                 FileInfo fileInfo = new FileInfo();
                 fileInfo.setUserId(userId);
@@ -258,7 +266,7 @@ public class FileServiceImpl implements FileService {
         BufferedReader bufferIn  = null;
         BufferedReader bufferErr  = null;
         StringBuffer output = new StringBuffer();
-        String lreResult = null;
+        String lreResultStr = null;
         Byte res = null;
         try {
             process = pb.start();
@@ -275,8 +283,8 @@ public class FileServiceImpl implements FileService {
             }
             try {
                 process.waitFor();
-                lreResult = output.toString().split("\n")[0];
-                switch (lreResult) {
+                lreResultStr = output.toString().split("\n")[0];
+                switch (lreResultStr) {
                     case "zh-CN":
                         res = 1;
                         break;
@@ -301,7 +309,7 @@ public class FileServiceImpl implements FileService {
                 if (sessionId != null) {
                     JSONObject jFinishRecognize = JSON.parseObject(finishRecognizeStr);
                     jFinishRecognize.put("sessionId", sessionId);
-                    jFinishRecognize.put("result", lreResult);
+                    jFinishRecognize.put("result", lreResultStr);
                     MqttMsgClient.getInstance().publish(topicDirective, jFinishRecognize.toString(), 0);
                     logger.info("推送消息主题:" + topicDirective);
                 }
