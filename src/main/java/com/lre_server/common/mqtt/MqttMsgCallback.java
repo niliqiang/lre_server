@@ -26,6 +26,7 @@ public class MqttMsgCallback implements MqttCallback {
     private SessionService sessionService;
 
     private static String connectAckStr = "{\"msgId\":20, \"state\":{\"acknowledge\":{}}}";
+    private static String eventAckStr = "{\"state\":{\"acknowledge\":{}}}";
     private static Logger logger= LoggerFactory.getLogger(MqttMsgClient.class);
 
     @Override
@@ -116,6 +117,19 @@ public class MqttMsgCallback implements MqttCallback {
                     case 3: {
                         logger.info("接收终端事件上报:" + jMsg.getJSONObject("state").getJSONObject("reported").getString("event"));
                         jSessionData.put("msg", "CompleteTask");
+                        // 更新eventAck消息并推送
+                        JSONObject jCompleteTaskAck = JSON.parseObject(eventAckStr);
+                        jCompleteTaskAck.put("msgId", 63);
+                        jCompleteTaskAck.put("sessionId", jMsg.getString("sessionId"));
+                        jCompleteTaskAck.getJSONObject("state").getJSONObject("acknowledge").put("event", "CompleteTask");
+                        String topicEventAck = topic + "/acknowledge";
+                        // 由于publish函数中有阻塞过程，需要开启新线程执行
+                        new Thread() {
+                            public void run() {
+                                MqttMsgClient mqttMsgClient =  MqttMsgClient.getInstance();
+                                mqttMsgClient.publish(topicEventAck, jCompleteTaskAck.toString(), 0);
+                            }
+                        }.start();
                         break;
                     }
                     // WakeUpTimeOut
