@@ -287,6 +287,8 @@ public class FileServiceImpl implements FileService {
                 switch (lreResultStr) {
                     case "zh-CN":
                         res = 1;
+                        // 终端在处理带有"-"或"_"的JSON字符串时有问题，去掉相关字符
+                        lreResultStr = "cn";
                         break;
                     case "en":
                         res = 2;
